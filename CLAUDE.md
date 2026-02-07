@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Diese Datei gibt Claude Code (claude.ai/code) Orientierung fuer die Arbeit in diesem Repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Projektuebersicht
 
@@ -82,10 +82,17 @@ Jede Test-Suite hat einen eigenen `extern "C" void app_main()` Einstiegspunkt mi
 
 GitHub Actions Workflow (`.github/workflows/build.yml`) fuehrt `pio run` + `pio check` bei Push/PR auf `main` aus.
 
+## Bekannte Plattform-Probleme
+
+- **macOS esptool/intelhex:** `ModuleNotFoundError: No module named 'intelhex'` — Fix: `pip3 install --target=$(echo ~/.platformio/packages/tool-esptoolpy) intelhex`
+- **Flash-Groesse:** Warnung `Expected 8MB, found 2MB` ist kosmetisch und beeinflusst den Build nicht.
+- **Erster Build:** Dauert 2-5 Minuten (kompiliert gesamtes ESP-IDF Framework), danach ~5 Sekunden.
+
 ## Dokumentation
 
-Gesamte Projektdokumentation liegt in `docs/`:
+Gesamte Projektdokumentation liegt in `docs/` und verwendet **ASCII-Umschreibungen** (ae/oe/ue/ss statt Umlaute/Eszett) fuer konsistente Darstellung unabhaengig vom Editor:
 - `01_Systemdokumentation.md` — Architektur, Schnittstellen, Design-Constraints
 - `02_Benutzerhandbuch.md` — Build-Setup, Analyse-Workflow
 - `03_Abschlussbericht.md` — Gap-Analyse (Prototyp vs. Serie), ASIL-Klassifikation
 - `04_Cpp17_Herleitung.md` — C++17-Rationale fuer sicherheitskritische Systeme
+- `PRESENTATION.md` — 6-Folien-Praesentation mit Mermaid-Diagrammen und Sprechernotizen

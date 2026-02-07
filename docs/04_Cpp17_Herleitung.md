@@ -205,11 +205,12 @@ static uint32_t getSystemTick();
 
 #### Beispiel 5: `nullptr` statt `NULL`
 
-In `src/main.cpp` (Zeile 36) wird `nullptr` fuer die FreeRTOS Task-Erstellung verwendet:
+In `src/main.cpp` wird `nullptr` fuer die FreeRTOS Task-Erstellung verwendet:
 
 ```cpp
 // src/main.cpp
-xTaskCreate(run_safety_task, "SafetyTask", 4096, nullptr, 5, nullptr);
+xTaskCreate(run_safety_task, "SafetyTask", kSafetyTaskStackSize, nullptr,
+            kSafetyTaskPriority, nullptr);
 ```
 
 **Wirkung:** `nullptr` ist ein C++11/17 Keyword mit eigenem Typ (`std::nullptr_t`). Im Gegensatz zu `NULL` (das als `0` oder `(void*)0` definiert sein kann) kann `nullptr` nicht versehentlich als Integer interpretiert werden. Dies eliminiert eine ganze Klasse von Typ-Verwechslungsfehlern.
@@ -236,13 +237,16 @@ Das Projekt vermeidet konsequent **dynamische Speicherallokation** (`new`, `mall
 
 - **`std::array`** wird auf dem Stack alloziert -- feste Groesse, zur Kompilierzeit bekannt.
 - **`std::optional`** wird auf dem Stack alloziert -- kein Heap-Zugriff.
-- **FreeRTOS Tasks** erhalten feste Stack-Groessen bei der Erstellung (vgl. `main.cpp` Zeile 36: `4096` Bytes).
+- **FreeRTOS Tasks** erhalten feste Stack-Groessen bei der Erstellung (vgl. `main.cpp`: `kSafetyTaskStackSize = 4096` Bytes).
 
 ```cpp
 // Feste Stack-Allokation -- kein Heap im laufenden Betrieb
-xTaskCreate(run_safety_task, "SafetyTask", 4096, nullptr, 5, nullptr);
-//                                         ^^^^
-//                              Stack-Groesse: Zur Kompilierzeit definiert
+static constexpr uint32_t kSafetyTaskStackSize = 4096;
+static constexpr UBaseType_t kSafetyTaskPriority = 5;
+
+xTaskCreate(run_safety_task, "SafetyTask", kSafetyTaskStackSize, nullptr,
+            kSafetyTaskPriority, nullptr);
+//          constexpr-Werte: Zur Kompilierzeit definiert, keine Magic Numbers
 ```
 
 ### Keine Speicherfragmentierung

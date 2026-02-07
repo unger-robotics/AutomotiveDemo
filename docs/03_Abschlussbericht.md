@@ -155,7 +155,7 @@ Der entscheidende Mehrwert des Projekts liegt in der **Portierbarkeit des Schich
 | **Service Layer** (`Srv_`) | Minimal | Timing-Abstraktion muss an neues OS angepasst werden (z.B. `vTaskDelay` -> AUTOSAR `Schedule()`). |
 | **MCAL** (`Mcal_`) | Vollstaendig | Muss komplett neu implementiert werden fuer Ziel-MCU (Register, Treiber, Peripherie). |
 
-Diese Tabelle zeigt: Bei einem Wechsel auf eine ASIL-D-MCU bleiben ca. 70% des Software-Stacks (Application + Service Layer) validiert und wiederverwendbar. Nur der MCAL muss neu entwickelt und getestet werden. Das ist der Kernbeweis dafuer, dass die Architektur korrekt abstrahiert.
+Diese Tabelle zeigt: Bei einem Wechsel auf eine ASIL-D-MCU bleiben zwei von drei Software-Modulen (Application Core und Service Layer, zusammen 120 von 200 Quellcodezeilen, also 60%) validiert und wiederverwendbar. Nur der MCAL und die OS-Anbindung (`main.cpp`) muessen neu implementiert werden (zusammen 80 Zeilen). Der ueberproportionale Anteil der plattformspezifischen Zeilen erklaert sich durch die umfangreiche FreeRTOS-Task-Konfiguration in `main.cpp` -- bei wachsender Applikationslogik verschiebt sich das Verhaeltnis weiter zugunsten des portablen Codes.
 
 ### Naechster Schritt: Portierung auf ASIL-D MCU
 

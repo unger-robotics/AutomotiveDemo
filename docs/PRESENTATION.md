@@ -7,17 +7,17 @@
 **Inhalt (Bullet Points):**
 
 * **Zielsetzung:** Entwicklung eines sicherheitsgerichteten Software-Stacks ("Quality Managed").
-* **Herausforderung:** Übertragung von Automotive-Standards (MISRA, V-Modell) auf kosteneffiziente IoT-Hardware.
+* **Herausforderung:** Uebertragung von Automotive-Standards (MISRA, V-Modell) auf kosteneffiziente IoT-Hardware.
 * **Tech Stack:**
 * Hardware: Seeed Studio XIAO ESP32-S3 (Dual-Core Xtensa).
-* Framework: ESP-IDF (FreeRTOS) – *No Arduino!*
+* Framework: ESP-IDF (FreeRTOS) -- *No Arduino!*
 * Sprache: C++17 (Application) & C11 (MCAL).
 
 
 
 **Sprechernotiz:**
 
-> „Guten Tag. Mein Ziel war es nicht, einfach nur eine LED blinken zu lassen. Mein Ziel war es, eine professionelle **Software-Architektur** zu implementieren, die den Prinzipien der funktionalen Sicherheit folgt – auch wenn die Hardware darunter nur ein günstiger ESP32 ist. Ich zeige hier einen 'Quality Managed' (QM) Demonstrator.“
+> "Guten Tag. Mein Ziel war es nicht, einfach nur eine LED blinken zu lassen. Mein Ziel war es, eine professionelle **Software-Architektur** zu implementieren, die den Prinzipien der funktionalen Sicherheit folgt -- auch wenn die Hardware darunter nur ein guenstiger ESP32 ist. Ich zeige hier einen 'Quality Managed' (QM) Demonstrator."
 
 ---
 
@@ -129,11 +129,11 @@ graph TD
 
 **Sprechernotiz:**
 
-> „Sicherheit entsteht durch Ordnung. Ich habe eine strikte **3-Schichten-Architektur** umgesetzt. Die Applikations-Logik oben weiß nicht, dass sie auf einem ESP32 läuft. Sie kennt nur Signale vom Service-Layer. Wenn wir morgen auf einen Infineon Aurix wechseln, tausche ich nur den untersten Block – den MCAL – aus. Der Rest bleibt validiert.“
+> "Sicherheit entsteht durch Ordnung. Ich habe eine strikte **3-Schichten-Architektur** umgesetzt. Die Applikations-Logik oben weiss nicht, dass sie auf einem ESP32 laeuft. Sie kennt nur Signale vom Service-Layer. Wenn wir morgen auf einen Infineon Aurix wechseln, tausche ich nur den untersten Block -- den MCAL -- aus. Der Rest bleibt validiert."
 
 ---
 
-### Folie 3: Methodik – "Shift-Left" mit C++17
+### Folie 3: Methodik -- "Shift-Left" mit C++17
 
 **Titel:** Defensive Programmierung & Quality Gates
 
@@ -172,10 +172,10 @@ sequenceDiagram
 **Inhalt (Bullet Points):**
 
 * **Problem Legacy C:** Makros (`#define`) und rohe Pointer sind Fehlerquellen zur Laufzeit.
-* **Lösung C++17:** Fehlererkennung zur **Kompilierzeit**.
+* **Loesung C++17:** Fehlererkennung zur **Kompilierzeit**.
 * `constexpr` statt `#define` (Typsicherheit).
-* `static_assert` für Architektur-Checks.
-* `std::optional` erzwingt Plausibilitätsprüfung.
+* `static_assert` fuer Architektur-Checks.
+* `std::optional` erzwingt Plausibilitaetspruefung.
 
 
 * **Automatisierung:**
@@ -187,7 +187,7 @@ sequenceDiagram
 
 **Sprechernotiz:**
 
-> „In der Serie ist ein Bug teuer. Deshalb verfolge ich den 'Shift-Left'-Ansatz. Ich nutze C++17 Features, um Fehler so früh wie möglich zu finden. Ein Beispiel: Statt zur Laufzeit zu prüfen, ob die Registerbreite stimmt, nutze ich `static_assert`. Wenn die Architektur nicht passt, kompiliert der Code gar nicht erst. Das ist Sicherheit by Design.“
+> "In der Serie ist ein Bug teuer. Deshalb verfolge ich den 'Shift-Left'-Ansatz. Ich nutze C++17 Features, um Fehler so frueh wie moeglich zu finden. Ein Beispiel: Statt zur Laufzeit zu pruefen, ob die Registerbreite stimmt, nutze ich `static_assert`. Wenn die Architektur nicht passt, kompiliert der Code gar nicht erst. Das ist Sicherheit by Design."
 
 ---
 
@@ -253,19 +253,19 @@ flowchart LR
 | Feature    | Projekt (ESP32-S3)       | Zielbild Serie (z.B. Aurix) | Bewertung                                              |
 |------------|--------------------------|-----------------------------|--------------------------------------------------------|
 | **CPU**    | Dual Core (SMP)          | Lockstep Cores              | **Hardware-Limit:** Keine Erkennung von Rechenfehlern. |
-| **Memory** | SRAM (No ECC)            | ECC-RAM                     | **Risiko:** Bit-Flips führen zu Absturz/Fehler.        |
-| **OS**     | FreeRTOS                 | AUTOSAR OS / SAFERTOS       | **Partitionierung:** Tasks sind nicht strikt getrennt. |
-| **Level**  | **QM (Quality Managed)** | **ASIL-B / ASIL-D**         | Geeignet für Komfort, nicht für Bremse/Lenkung.        |
+| **Memory** | SRAM (No ECC)            | ECC-RAM                     | **Risiko:** Bit-Flips fuehren zu Absturz/Fehler.       |
+| **OS**     | FreeRTOS                 | AUTOSAR OS / SAFERTOS       | **Partitionierung:** Tasks sind nicht strikt getrennt.  |
+| **Level**  | **QM (Quality Managed)** | **ASIL-B / ASIL-D**         | Geeignet fuer Komfort, nicht fuer Bremse/Lenkung.      |
 
 **Sprechernotiz:**
 
-> „Ich mache mir keine Illusionen: Dies ist kein Airbag-Steuergerät. Der ESP32 hat kein Lockstep und keinen ECC-RAM. Er kann sich selbst nicht überwachen. Für eine echte ISO-26262-Zertifizierung müsste die Hardware getauscht werden. Aber: Meine **Software-Prozesse** sind bereits ASIL-ready.“
+> "Ich mache mir keine Illusionen: Dies ist kein Airbag-Steuergeraet. Der ESP32 hat kein Lockstep und keinen ECC-RAM. Er kann sich selbst nicht ueberwachen. Fuer eine echte ISO-26262-Zertifizierung muesste die Hardware getauscht werden. Aber: Meine **Software-Prozesse** sind bereits ASIL-ready."
 
 ---
 
 ### Folie 5: Implementierung (Live-Einblick)
 
-**Titel:** Code-Qualität in der Praxis
+**Titel:** Code-Qualitaet in der Praxis
 
 ```cpp
 // main.cpp - Auszug
@@ -285,13 +285,13 @@ static void run_safety_task(void* pvParameters) {
 
 **Inhalt (Bullet Points):**
 
-* Deterministisches Task-Setup (feste Prioritäten).
+* Deterministisches Task-Setup (feste Prioritaeten).
 * Keine dynamische Speicherallokation im laufenden Betrieb (Heap-Free).
-* Strikte Typisierung und MISRA-Konformität (z.B. `void` Casts).
+* Strikte Typisierung und MISRA-Konformitaet (z.B. `void` Casts).
 
 **Sprechernotiz:**
 
-> „Hier sehen Sie das Ergebnis. Sauberer, deterministischer Code. Kein `malloc`, keine unklaren Makros. Der `static_assert` in Zeile 3 garantiert, dass dieser Code niemals auf einer falschen Plattform gebaut wird. Das ist der Standard, den ich liefere.“
+> "Hier sehen Sie das Ergebnis. Sauberer, deterministischer Code. Kein `malloc`, keine unklaren Makros. Der `static_assert` in Zeile 3 garantiert, dass dieser Code niemals auf einer falschen Plattform gebaut wird. Das ist der Standard, den ich liefere."
 
 ---
 
@@ -302,9 +302,9 @@ static void run_safety_task(void* pvParameters) {
 **Inhalt:**
 
 * **Ergebnis:** Erfolgreicher Aufbau eines Automotive-QM-Demonstrators.
-* **Lessons Learned:** Moderne Toolchains (PlatformIO + Linter) ermöglichen High-End-Entwicklung auch auf Low-Cost-Hardware.
-* **Nächster Schritt:** Portierung des `App_Core` auf eine ASIL-D MCU (z. B. NXP S32K) zur Validierung der Portierbarkeit.
+* **Lessons Learned:** Moderne Toolchains (PlatformIO + Linter) ermoeglichen High-End-Entwicklung auch auf Low-Cost-Hardware.
+* **Naechster Schritt:** Portierung des `App_Core` auf eine ASIL-D MCU (z. B. NXP S32K) zur Validierung der Portierbarkeit.
 
 **Sprechernotiz:**
 
-> „Zusammenfassend: Die Hardware ist austauschbar, die Methodik ist bleibend. Ich habe gezeigt, dass ich die Prozesse der Automobilindustrie verstehe und technisch umsetzen kann. Vielen Dank.“
+> "Zusammenfassend: Die Hardware ist austauschbar, die Methodik ist bleibend. Ich habe gezeigt, dass ich die Prozesse der Automobilindustrie verstehe und technisch umsetzen kann. Vielen Dank."
