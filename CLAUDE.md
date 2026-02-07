@@ -1,89 +1,89 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Diese Datei gibt Claude Code (claude.ai/code) Orientierung fuer die Arbeit in diesem Repository.
 
-## Project Overview
+## Projektuebersicht
 
-**AutomotiveDemo** — QM (Quality Managed) Demonstrator for Automotive Software Engineering on ESP32-S3. Applies ISO 26262 methodology (V-Modell, MISRA C++ alignment, static analysis) on COTS hardware. The software architecture is designed to be portable to ASIL-certified MCUs (e.g., Infineon Aurix, NXP S32K).
+**AutomotiveDemo** — QM-Demonstrator (Quality Managed) fuer Automotive Software Engineering auf ESP32-S3. Wendet ISO 26262-Methodik an (V-Modell, MISRA C++ Ausrichtung, statische Analyse) auf COTS-Hardware. Die Software-Architektur ist portierbar auf ASIL-zertifizierte MCUs (z.B. Infineon Aurix, NXP S32K).
 
-**Target:** Seeed Studio XIAO ESP32-S3 (Dual-Core Xtensa LX7)
-**Framework:** ESP-IDF with FreeRTOS (not Arduino)
-**Languages:** C++17 (Application/Service layers), C11 (MCAL layer)
+**Zielplattform:** Seeed Studio XIAO ESP32-S3 (Dual-Core Xtensa LX7)
+**Framework:** ESP-IDF mit FreeRTOS (nicht Arduino)
+**Sprachen:** C++17 (Application/Service Layer), C11 (MCAL Layer)
 
-## Build & Analysis Commands
+## Build- und Analyse-Befehle
 
 ```bash
-pio run                    # Build firmware (first build takes 2-5 min, subsequent ~5s)
-pio run --target upload    # Flash to board via USB-C
-pio check                  # Static analysis (cppcheck + clang-tidy) — mandatory quality gate
-pio device monitor         # Serial monitor (115200 baud, with exception decoder)
-pio test                   # All unit tests (Unity framework, requires physical board)
-pio test -f test_app_core  # Run single test suite by folder name
+pio run                    # Firmware bauen (erster Build 2-5 Min, danach ~5s)
+pio run --target upload    # Auf Board flashen via USB-C
+pio check                  # Statische Analyse (cppcheck + clang-tidy) — verpflichtendes Quality Gate
+pio device monitor         # Serielle Ausgabe (115200 Baud, mit Exception Decoder)
+pio test                   # Alle Unit Tests (Unity Framework, Board muss angeschlossen sein)
+pio test -f test_app_core  # Einzelne Test-Suite nach Ordnername ausfuehren
 ```
 
-## Architecture (3-Layer Model)
+## Architektur (3-Schichten-Modell)
 
-Strict layered architecture inspired by AUTOSAR. Each layer communicates only with the layer directly below. No callbacks, no events, no layer-bypassing.
+Strikte Schichtenarchitektur nach AUTOSAR-Vorbild. Jede Schicht kommuniziert nur mit der direkt darunterliegenden. Keine Callbacks, keine Events, kein Layer-Bypassing.
 
 ```
-Application Layer (App_*)  →  Pure C++17 logic, NO esp_/freertos includes, portable to x86
-Service Layer    (Srv_*)   →  RTE equivalent, 10ms cyclic execution, may include esp_log.h
-MCAL             (Mcal_*)  →  Hardware abstraction, wraps ESP-IDF/FreeRTOS drivers
+Application Layer (App_*)  →  Reine C++17-Logik, KEINE esp_/freertos Includes, portierbar auf x86
+Service Layer    (Srv_*)   →  RTE-Aequivalent, 10ms zyklische Ausfuehrung, darf esp_log.h nutzen
+MCAL             (Mcal_*)  →  Hardware-Abstraktion, kapselt ESP-IDF/FreeRTOS-Treiber
 ```
 
-**Modules:**
-- `App_Core` — Application logic, state tracking, sensor fault reporting (`std::optional` API)
-- `Srv_Monitor` — Cyclic 10ms execution, coordinates App and MCAL layers, owns logging
-- `Mcal_System` — Hardware init, system tick (wraps `xTaskGetTickCount`)
+**Module:**
+- `App_Core` — Applikationslogik, Zustandsverwaltung, Sensor-Fehlerreporting (`std::optional` API)
+- `Srv_Monitor` — Zyklische 10ms-Ausfuehrung, koordiniert App und MCAL, verantwortlich fuer Logging
+- `Mcal_System` — Hardware-Init, System-Tick (kapselt `xTaskGetTickCount`)
 
-**Call chain:** `app_main()` → `Mcal::System::init()` → `xTaskCreate(SafetyTask)` → loop: `Srv::Monitor::runCycle()` → `App::Core::run()` every 10ms
+**Aufrufkette:** `app_main()` → `Mcal::System::init()` → `xTaskCreate(SafetyTask)` → Schleife: `Srv::Monitor::runCycle()` → `App::Core::run()` alle 10ms
 
-**Module structure convention:** Each module lives in `lib/<Prefix>_<Name>/` with separate `include/` and `src/` directories. The prefix (`Mcal_`, `Srv_`, `App_`) encodes the layer — architecture violations are visible at the `#include` statement.
+**Modulstruktur-Konvention:** Jedes Modul liegt in `lib/<Praefix>_<Name>/` mit separaten `include/` und `src/` Verzeichnissen. Das Praefix (`Mcal_`, `Srv_`, `App_`) kodiert die Schicht — Architekturverletzungen sind am `#include`-Statement sichtbar.
 
-**Layer include rules:**
-- `App_*` files must **never** include `esp_`, `freertos/`, or `Mcal_` headers
-- `Srv_*` files include `Mcal_` and `App_` headers, plus `esp_log.h` for logging
-- `Mcal_*` files include ESP-IDF/FreeRTOS headers
+**Include-Regeln pro Schicht:**
+- `App_*` Dateien duerfen **niemals** `esp_`, `freertos/` oder `Mcal_` Header inkludieren
+- `Srv_*` Dateien inkludieren `Mcal_` und `App_` Header, dazu `esp_log.h` fuer Logging
+- `Mcal_*` Dateien inkludieren ESP-IDF/FreeRTOS Header
 
-## Coding Constraints
+## Coding-Regeln
 
-- **`-Werror` policy:** Zero warnings allowed. Every compiler warning breaks the build.
-- **No heap after init:** No `malloc`/`new` after `app_main()` returns. Static or stack allocation only.
-- **No C++ exceptions:** Disabled via ESP-IDF config. Use `std::optional` or error codes instead.
-- **MISRA-aligned casts:** Use `static_cast<>()` never C-style casts. Cast unused parameters with `(void)param`.
-- **Constants:** `static constexpr` with `k` prefix (e.g., `kHeartbeatIntervalCycles`), never `#define`.
-- **printf with uint32_t:** Use `static_cast<unsigned long>(val)` with `%lu` format specifier for portability.
-- **Include order:** Own header first, then project headers, then system headers (alphabetically sorted by `.clang-format`).
-- **Deterministic tasks:** Fixed priorities, fixed stack sizes, no dynamic task creation at runtime.
-- **Formatting:** `.clang-format` enforces Google-based style with 4-space indent, 100-char column limit, no single-line blocks/functions/ifs/loops (safety rules).
+- **`-Werror` Policy:** Null Warnungen erlaubt. Jede Compiler-Warnung bricht den Build.
+- **Kein Heap nach Init:** Kein `malloc`/`new` nach Rueckkehr von `app_main()`. Nur statische oder Stack-Allokation.
+- **Keine C++ Exceptions:** Deaktiviert via ESP-IDF Konfiguration. Stattdessen `std::optional` oder Fehlercodes verwenden.
+- **MISRA-konforme Casts:** `static_cast<>()` verwenden, niemals C-Style Casts. Ungenutzte Parameter mit `(void)param` casten.
+- **Konstanten:** `static constexpr` mit `k`-Praefix (z.B. `kHeartbeatIntervalCycles`), niemals `#define`.
+- **printf mit uint32_t:** `static_cast<unsigned long>(val)` mit `%lu` Format-Specifier fuer Portabilitaet.
+- **Include-Reihenfolge:** Eigener Header zuerst, dann Projekt-Header, dann System-Header (alphabetisch sortiert durch `.clang-format`).
+- **Deterministische Tasks:** Feste Prioritaeten, feste Stack-Groessen, keine dynamische Task-Erzeugung zur Laufzeit.
+- **Formatierung:** `.clang-format` erzwingt Google-basierten Stil mit 4-Space Einrueckung, 100 Zeichen Zeilenlimit, keine einzeiligen Bloecke/Funktionen/Ifs/Schleifen (Safety-Regeln).
 
-## Static Analysis Configuration
+## Statische Analyse
 
-Both tools are configured in `platformio.ini` and `.clang-tidy`. Must pass with zero High/Medium findings:
+Beide Tools sind in `platformio.ini` und `.clang-tidy` konfiguriert. Muessen mit null High/Medium Findings bestehen:
 
 - **cppcheck:** `--enable=warning,style,performance,portability`
-- **clang-tidy:** `cert-*`, `clang-analyzer-*`, `bugprone-*`, `performance-*`, `readability-*` (disabled: `readability-magic-numbers`, `readability-identifier-length`, `bugprone-easily-swappable-parameters`)
+- **clang-tidy:** `cert-*`, `clang-analyzer-*`, `bugprone-*`, `performance-*`, `readability-*` (deaktiviert: `readability-magic-numbers`, `readability-identifier-length`, `bugprone-easily-swappable-parameters`)
 
-Suppressions require inline justification (`// cppcheck-suppress <id> -- <reason>` or `// NOLINT(<check>) -- <reason>`).
+Unterdrueckungen erfordern Inline-Begruendung (`// cppcheck-suppress <id> -- <Grund>` oder `// NOLINT(<check>) -- <Grund>`).
 
-## Testing
+## Tests
 
-Unit tests use the **Unity** framework (PlatformIO default for ESP-IDF) and run on the ESP32-S3 target:
+Unit Tests nutzen das **Unity** Framework (PlatformIO-Standard fuer ESP-IDF) und laufen auf dem ESP32-S3 Target:
 
-- `test/test_mcal_system/` — MCAL layer tests (init, tick monotonicity)
-- `test/test_app_core/` — Application layer tests (state, config validation)
-- `test/test_srv_monitor/` — Service layer tests (runCycle stability)
+- `test/test_mcal_system/` — MCAL-Layer Tests (Init, Tick-Monotonie)
+- `test/test_app_core/` — Application-Layer Tests (Zustand, Config-Validierung)
+- `test/test_srv_monitor/` — Service-Layer Tests (runCycle-Stabilitaet)
 
-Each test suite has its own `extern "C" void app_main()` entry point with `UNITY_BEGIN()`/`UNITY_END()` and runs independently. Tests require a physically connected board.
+Jede Test-Suite hat einen eigenen `extern "C" void app_main()` Einstiegspunkt mit `UNITY_BEGIN()`/`UNITY_END()` und laeuft unabhaengig. Tests erfordern ein physisch angeschlossenes Board.
 
 ## CI
 
-GitHub Actions workflow (`.github/workflows/build.yml`) runs `pio run` + `pio check` on push/PR to `main`.
+GitHub Actions Workflow (`.github/workflows/build.yml`) fuehrt `pio run` + `pio check` bei Push/PR auf `main` aus.
 
-## Documentation
+## Dokumentation
 
-All project documentation lives in `docs/`:
-- `01_Systemdokumentation.md` — Architecture, interfaces, design constraints
-- `02_Benutzerhandbuch.md` — Build setup, static analysis workflow
-- `03_Abschlussbericht.md` — Gap analysis (Prototype vs. Series), ASIL classification
-- `04_Cpp17_Herleitung.md` — C++17 rationale for safety-critical embedded systems
+Gesamte Projektdokumentation liegt in `docs/`:
+- `01_Systemdokumentation.md` — Architektur, Schnittstellen, Design-Constraints
+- `02_Benutzerhandbuch.md` — Build-Setup, Analyse-Workflow
+- `03_Abschlussbericht.md` — Gap-Analyse (Prototyp vs. Serie), ASIL-Klassifikation
+- `04_Cpp17_Herleitung.md` — C++17-Rationale fuer sicherheitskritische Systeme
