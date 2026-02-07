@@ -13,6 +13,10 @@
 
 static_assert(sizeof(void*) == 4, "Error: Target must be 32-bit");
 
+// Task-Konfiguration (deterministische Werte, keine Magic Numbers)
+static constexpr uint32_t kSafetyTaskStackSize = 4096;
+static constexpr UBaseType_t kSafetyTaskPriority = 5;
+
 extern "C" {
 void app_main(void);
 }
@@ -35,7 +39,8 @@ void app_main(void) {
     Mcal::System::init();
 
     // 2. Erstellen der OS Tasks
-    xTaskCreate(run_safety_task, "SafetyTask", 4096, nullptr, 5, nullptr);
+    xTaskCreate(run_safety_task, "SafetyTask", kSafetyTaskStackSize, nullptr,
+                kSafetyTaskPriority, nullptr);
 
     // app_main endet hier, FreeRTOS Scheduler übernimmt.
 }
