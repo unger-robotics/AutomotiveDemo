@@ -55,6 +55,13 @@ pio test                   # Unit Tests (Board muss angeschlossen sein)
 | [`03_Abschlussbericht.md`](docs/03_Abschlussbericht.md) | Gap-Analyse (Prototyp vs. Serie), ASIL-Klassifikation |
 | [`04_Cpp17_Herleitung.md`](docs/04_Cpp17_Herleitung.md) | C++17-Rationale fuer sicherheitskritische Systeme |
 
+Dokumentation im Browser ansehen (mit Mermaid-Diagrammen):
+
+```bash
+cd docs && python3 -m http.server 8000
+# Dann http://localhost:8000 oeffnen
+```
+
 ## Lizenz
 
-Dieses Projekt ist ein Lehrdemontstrator und unterliegt keiner Open-Source-Lizenz.
+Dieses Projekt ist ein Lehrdemonstrator und unterliegt keiner Open-Source-Lizenz.
