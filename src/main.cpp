@@ -39,8 +39,8 @@ void app_main(void) {
     Mcal::System::init();
 
     // 2. Erstellen der OS Tasks
-    xTaskCreate(run_safety_task, "SafetyTask", kSafetyTaskStackSize, nullptr,
-                kSafetyTaskPriority, nullptr);
+    xTaskCreate(run_safety_task, "SafetyTask", kSafetyTaskStackSize, nullptr, kSafetyTaskPriority,
+                nullptr);
 
     // app_main endet hier, FreeRTOS Scheduler übernimmt.
 }

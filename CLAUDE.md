@@ -19,6 +19,8 @@ pio check                  # Statische Analyse (cppcheck + clang-tidy) — verpf
 pio device monitor         # Serielle Ausgabe (115200 Baud, mit Exception Decoder)
 pio test                   # Alle Unit Tests (Unity Framework, Board muss angeschlossen sein)
 pio test -f test_app_core  # Einzelne Test-Suite nach Ordnername ausfuehren
+pio debug                  # GDB-Debugging via USB-JTAG (oder F5 in VS Code)
+clang-format -i src/*.cpp lib/*/src/*.cpp lib/*/include/*.hpp  # Code formatieren
 ```
 
 ## Architektur (3-Schichten-Modell)

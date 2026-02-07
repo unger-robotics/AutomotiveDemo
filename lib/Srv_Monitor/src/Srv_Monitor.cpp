@@ -17,8 +17,7 @@ void Monitor::runCycle() {
 
     ++cycleCounter;
     if (cycleCounter >= App::Config::kHeartbeatIntervalCycles) {
-        ESP_LOGI(TAG, "Heartbeat | tick=%lu | cycles=%lu",
-                 static_cast<unsigned long>(tick),
+        ESP_LOGI(TAG, "Heartbeat | tick=%lu | cycles=%lu", static_cast<unsigned long>(tick),
                  static_cast<unsigned long>(cycleCounter));
         cycleCounter = 0;
     }

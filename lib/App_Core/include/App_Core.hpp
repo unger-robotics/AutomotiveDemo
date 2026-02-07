@@ -13,22 +13,18 @@ namespace App {
 /**
  * @brief Typsichere Sensor-Identifikation.
  */
-enum class SensorId : uint8_t {
-    kSystemTick = 0,
-    kTemperature = 1,
-    kVoltage = 2
-};
+enum class SensorId : uint8_t { kSystemTick = 0, kTemperature = 1, kVoltage = 2 };
 
 /**
  * @brief Compile-Time Konfiguration der Applikation.
  */
 namespace Config {
-    static constexpr uint32_t kHeartbeatIntervalCycles = 1000;
-    static constexpr uint32_t kCycleTimeMs = 10;
-    static constexpr uint32_t kMaxTickValue = UINT32_MAX;
+static constexpr uint32_t kHeartbeatIntervalCycles = 1000;
+static constexpr uint32_t kCycleTimeMs = 10;
+static constexpr uint32_t kMaxTickValue = UINT32_MAX;
 
-    static_assert(kHeartbeatIntervalCycles > 0, "Heartbeat interval must be positive");
-    static_assert(kCycleTimeMs > 0, "Cycle time must be positive");
+static_assert(kHeartbeatIntervalCycles > 0, "Heartbeat interval must be positive");
+static_assert(kCycleTimeMs > 0, "Cycle time must be positive");
 }  // namespace Config
 
 /**
