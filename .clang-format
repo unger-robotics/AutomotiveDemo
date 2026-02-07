@@ -1,0 +1,29 @@
+# Basis: Google Style (sehr robust), aber angepasst
+BasedOnStyle: Google
+
+# Einrückung: 4 Spaces (Standard im Embedded, Google nutzt sonst 2)
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# Zeilenlänge: 100 (80 ist oft zu kurz für sprechende C++ Namen)
+ColumnLimit: 100
+
+# Klammern:
+# Attach (Klammer in gleicher Zeile) spart vertikalen Platz.
+# Für striktes MISRA bevorzugen manche "Linux" oder "Allman",
+# aber "Attach" ist Standard in modernen C++ Guidelines.
+BreakBeforeBraces: Attach
+
+# Pointer: 'int* ptr' (Linksbindung betont den Typ)
+PointerAlignment: Left
+
+# Sortierung: Includes alphabetisch sortieren (Clean Code)
+SortIncludes: true
+
+# Safety: Keine Einzeiler für Funktionen/If-Blöcke!
+# Zwingt Fehlerbehandlung und Logik in den Block-Body.
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false

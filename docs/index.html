@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutomotiveDemo - Technische Dokumentation</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f5f5;
+            color: #1a1a1a;
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 24px 16px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        nav h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #888;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #333;
+        }
+        nav .nav-item {
+            display: block;
+            padding: 10px 12px;
+            margin: 2px 0;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        nav .nav-item:hover { background: #2a2a2a; color: #fff; }
+        nav .nav-item.active { background: #333; color: #fff; font-weight: 600; }
+        nav .nav-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            background: #333;
+            border-radius: 50%;
+            font-size: 12px;
+            margin-right: 8px;
+            font-weight: 700;
+        }
+        nav .nav-item.active .nav-number { background: #555; }
+        main {
+            margin-left: 280px;
+            padding: 40px 60px;
+            max-width: 1000px;
+        }
+        .doc-section { display: none; }
+        .doc-section.active { display: block; }
+        .doc-content {
+            background: #fff;
+            padding: 48px 56px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            line-height: 1.7;
+        }
+        .doc-content h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .doc-content h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .doc-content h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 12px;
+        }
+        .doc-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 8px;
+        }
+        .doc-content p { margin-bottom: 12px; }
+        .doc-content ul, .doc-content ol { margin: 12px 0; padding-left: 24px; }
+        .doc-content li { margin-bottom: 6px; }
+        .doc-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+        .doc-content th, .doc-content td {
+            border: 1px solid #ddd;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        .doc-content th {
+            background: #f0f0f0;
+            font-weight: 600;
+        }
+        .doc-content tr:nth-child(even) { background: #fafafa; }
+        .doc-content code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+            font-size: 13px;
+        }
+        .doc-content pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px 24px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 16px 0;
+            line-height: 1.5;
+        }
+        .doc-content pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+            font-size: 13px;
+        }
+        .doc-content blockquote {
+            border-left: 4px solid #333;
+            padding: 12px 20px;
+            margin: 16px 0;
+            background: #f8f8f8;
+            color: #555;
+        }
+        .doc-content hr {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin: 32px 0;
+        }
+        .doc-content strong { color: #000; }
+        .doc-content .mermaid {
+            text-align: center;
+            margin: 24px 0;
+            padding: 16px;
+            background: #fafafa;
+            border-radius: 6px;
+        }
+        .header-bar {
+            background: #fff;
+            padding: 16px 56px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-bar .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-cpp { background: #e3f2fd; color: #1565c0; }
+        .badge-iso { background: #e8f5e9; color: #2e7d32; }
+        .badge-qm { background: #fff3e0; color: #e65100; }
+    </style>
+</head>
+<body>
+    <nav>
+        <h2>Dokumentation</h2>
+        <a class="nav-item active" onclick="showSection(0)">
+            <span class="nav-number">1</span>Systemdokumentation
+        </a>
+        <a class="nav-item" onclick="showSection(1)">
+            <span class="nav-number">2</span>Benutzerhandbuch
+        </a>
+        <a class="nav-item" onclick="showSection(2)">
+            <span class="nav-number">3</span>Abschlussbericht
+        </a>
+        <a class="nav-item" onclick="showSection(3)">
+            <span class="nav-number">4</span>C++17 Herleitung
+        </a>
+    </nav>
+    <main>
+        <div class="header-bar">
+            <strong>AutomotiveDemo</strong>
+            <span class="badge badge-cpp">C++17</span>
+            <span class="badge badge-iso">ISO 26262</span>
+            <span class="badge badge-qm">QM Level</span>
+        </div>
+        <div id="section-0" class="doc-section active"><div class="doc-content" id="content-0"></div></div>
+        <div id="section-1" class="doc-section"><div class="doc-content" id="content-1"></div></div>
+        <div id="section-2" class="doc-section"><div class="doc-content" id="content-2"></div></div>
+        <div id="section-3" class="doc-section"><div class="doc-content" id="content-3"></div></div>
+    </main>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#ffffff',
+                primaryTextColor: '#000000',
+                primaryBorderColor: '#333333',
+                lineColor: '#333333',
+                tertiaryColor: '#f4f4f4'
+            }
+        });
+
+        const renderer = new marked.Renderer();
+        const origCode = renderer.code;
+        renderer.code = function({ text, lang }) {
+            if (lang === 'mermaid') {
+                return '<div class="mermaid">' + text + '</div>';
+            }
+            const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            return '<pre><code class="language-' + (lang||'') + '">' + escaped + '</code></pre>';
+        };
+        marked.setOptions({ renderer: renderer });
+
+        const docs = [
+            `# 1. Systemdokumentation (Die Architektur)
+
+| Metadaten        | Wert                                       |
+|------------------|--------------------------------------------|
+| **Zielgruppe**   | Software-Architekten, Reviewer, Auditoren  |
+| **Zweck**        | Nachweis der statischen Struktur und der Design-Entscheidungen |
+| **Klassifikation** | QM (Quality Managed) nach ISO 26262       |
+| **Plattform**    | Seeed Studio XIAO ESP32-S3 (Dual-Core Xtensa LX7) |
+| **Framework**    | ESP-IDF (FreeRTOS), kein Arduino           |
+| **Sprachen**     | C++17 (Application/Service), C11 (MCAL)   |
+
+---
+
+## 1.1 Architekturschaubild (Schichtenmodell)
+
+### Entwurfsprinzip
+
+Die Software-Architektur folgt dem Prinzip der **strikten Schichtentrennung** (Layered Architecture), wie sie im Automotive-Bereich durch AUTOSAR und ISO 26262 gefordert wird. Jede Schicht kommuniziert ausschliesslich mit der direkt benachbarten Schicht. Horizontale Zugriffe oder Layer-Bypasses sind architektonisch verboten.
+
+Die Umsetzung erfolgt physisch durch die Verzeichnisstruktur im \`lib/\`-Ordner. Jedes Modul besitzt eine eigene Bibliothek mit klar getrenntem \`include/\`- und \`src/\`-Verzeichnis:
+
+\`\`\`
+lib/
+  Mcal_System/          <-- Schicht 3: MCAL (Hardware-spezifisch)
+    include/
+      Mcal_System.hpp
+    src/
+      Mcal_System.cpp
+  Srv_Monitor/           <-- Schicht 2: Service Layer / RTE
+    include/
+      Srv_Monitor.hpp
+    src/
+      Srv_Monitor.cpp
+src/
+  main.cpp               <-- OS Entry Point (Startup Code)
+\`\`\`
+
+Die Namenskonvention \`Mcal_\`, \`Srv_\`, \`App_\` codiert die Schichtzugehoerigkeit direkt im Modulnamen und macht Architekturverletzungen bereits am Include-Statement sichtbar.
+
+### Schichtenmodell-Diagramm
+
+\`\`\`mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#ffffff',
+    'primaryTextColor': '#000000',
+    'primaryBorderColor': '#333333',
+    'lineColor': '#333333',
+    'tertiaryColor': '#f4f4f4'
+  }
+}}%%
+graph TD
+    subgraph "Application Layer (Hardware-Agnostisch)"
+        APP["<b>App_Core</b><br/>Reine C++17 Applikationslogik<br/>Keine esp_ Includes erlaubt<br/>Testbar auf x86/PC (Host-Test)"]
+    end
+
+    subgraph "Service Layer / RTE (Middleware)"
+        SRV["<b>Srv_Monitor</b><br/>Zyklische Ablaufsteuerung (10ms)<br/>Signalabstraktion: Physik &harr; Bits<br/>Srv::Monitor::runCycle()"]
+    end
+
+    subgraph "MCAL (Hardware-Spezifisch)"
+        MCAL["<b>Mcal_System</b><br/>Microcontroller Abstraction Layer<br/>Kapselt ESP-IDF Treiber<br/>Mcal::System::init() / getSystemTick()"]
+    end
+
+    subgraph "Plattform (Nicht im Scope)"
+        IDF["ESP-IDF Treiber<br/>(FreeRTOS, GPIO, Timer, SPI)"]
+        HW["ESP32-S3 Silicon<br/>(Dual-Core Xtensa LX7)"]
+    end
+
+    APP -->|"Synchroner Aufruf"| SRV
+    SRV -->|"Synchroner Aufruf"| MCAL
+    MCAL -->|"ESP-IDF API"| IDF
+    IDF -->|"Register-Zugriff"| HW
+
+    style APP fill:#ffffff,stroke:#333,stroke-width:2px
+    style SRV fill:#f0f0f0,stroke:#333,stroke-width:2px
+    style MCAL fill:#e0e0e0,stroke:#333,stroke-width:2px
+    style IDF fill:#d0d0d0,stroke:#333,stroke-width:1px
+    style HW fill:#c0c0c0,stroke:#333,stroke-width:1px
+\`\`\`
+
+### Schichtenbeschreibung
+
+#### Schicht 1: Application Layer (\`App_Core\`)
+
+| Eigenschaft       | Beschreibung                                       |
+|--------------------|----------------------------------------------------|
+| **Praefix**        | \`App_\`                                             |
+| **Sprache**        | C++17                                              |
+| **Hardware-Bezug** | Keiner. Keine \`esp_\`-Includes erlaubt.             |
+| **Testbarkeit**    | Vollstaendig auf x86/PC kompilier- und testbar.    |
+| **Verantwortung**  | Reine Applikationslogik, Zustandsmaschinen, Regelung. |
+
+Die Application Layer enthaelt die gesamte Geschaeftslogik der Anwendung. Sie ist vollstaendig hardware-agnostisch und darf ausschliesslich ueber die Service-Schicht auf Hardware-Ressourcen zugreifen. Dies garantiert Portierbarkeit: Bei einem Plattformwechsel (z.B. ESP32 auf NXP S32K oder Infineon Aurix) bleibt die gesamte Applikationsschicht unveraendert und validiert.
+
+#### Schicht 2: Service Layer / RTE (\`Srv_Monitor\`)
+
+| Eigenschaft       | Beschreibung                                        |
+|--------------------|-----------------------------------------------------|
+| **Praefix**        | \`Srv_\`                                              |
+| **Sprache**        | C++17                                               |
+| **Zykluszeit**     | 10 ms (Soft Real-Time, gesteuert durch FreeRTOS)    |
+| **Verantwortung**  | Middleware, Signalabstraktion, Ablaufsteuerung.      |
+
+Die Service-Schicht fungiert als **Runtime Environment (RTE)** analog zu AUTOSAR. Sie koordiniert den zyklischen Aufruf der Applikationslogik und abstrahiert Hardware-Signale in applikationsnahe Datentypen. Der zentrale Einstiegspunkt ist \`Srv::Monitor::runCycle()\`, der alle 10 ms durch den FreeRTOS-Task \`SafetyTask\` aufgerufen wird.
+
+**Deklaration** (\`lib/Srv_Monitor/include/Srv_Monitor.hpp\`):
+
+\`\`\`cpp
+namespace Srv {
+class Monitor {
+   public:
+    static void runCycle();
+};
+}  // namespace Srv
+\`\`\`
+
+#### Schicht 3: MCAL (\`Mcal_System\`)
+
+| Eigenschaft       | Beschreibung                                          |
+|--------------------|-------------------------------------------------------|
+| **Praefix**        | \`Mcal_\`                                               |
+| **Sprache**        | C++17 / C11 (Hardware-nahe Teile)                     |
+| **Hardware-Bezug** | Direkter Zugriff auf ESP-IDF APIs.                    |
+| **Verantwortung**  | Hardware-Initialisierung, Treiber-Kapselung.          |
+
+Der MCAL (Microcontroller Abstraction Layer) ist die einzige Schicht, die Hardware-spezifischen Code enthaelt. Er kapselt saemtliche ESP-IDF-Aufrufe und stellt den hoeheren Schichten eine hardware-unabhaengige C++-Schnittstelle zur Verfuegung.
+
+**Deklaration** (\`lib/Mcal_System/include/Mcal_System.hpp\`):
+
+\`\`\`cpp
+namespace Mcal {
+class System {
+   public:
+    static void init();
+    static uint32_t getSystemTick();
+};
+}  // namespace Mcal
+\`\`\`
+
+**Implementierung** (\`lib/Mcal_System/src/Mcal_System.cpp\`):
+
+\`\`\`cpp
+namespace Mcal {
+void System::init() {
+    // Hardware-Initialisierung (PLL, Flash, Watchdog, etc.)
+    ESP_LOGI(TAG, "System Hardware initialized (Simulated).");
+}
+
+uint32_t System::getSystemTick() {
+    return (uint32_t)xTaskGetTickCount();
+}
+}  // namespace Mcal
+\`\`\`
+
+---
+
+## 1.2 Schnittstellen-Definition
+
+### Kommunikationsprinzip
+
+Alle Schnittstellen im System folgen dem Prinzip **synchroner Funktionsaufrufe** mit strikter Aufrufrichtung:
+
+\`\`\`
+Application Layer  --->  Service Layer  --->  MCAL
+     (App_)                (Srv_)            (Mcal_)
+\`\`\`
+
+Es gibt keine Callbacks, keine Events und keine asynchronen Mechanismen zwischen den Schichten. Die Ablaufsteuerung erfolgt ausschliesslich durch den zyklischen Task-Aufruf aus \`main.cpp\`.
+
+### Aufrufsequenz (Runtime)
+
+\`\`\`mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#e5e5e5',
+    'primaryTextColor': '#000000',
+    'primaryBorderColor': '#333333',
+    'lineColor': '#333333',
+    'noteBkgColor': '#f4f4f4',
+    'noteTextColor': '#333333',
+    'noteBorderColor': '#666666'
+  }
+}}%%
+sequenceDiagram
+    participant OS as FreeRTOS Scheduler
+    participant Task as SafetyTask<br/>(main.cpp)
+    participant Srv as Srv::Monitor<br/>(Service Layer)
+    participant Mcal as Mcal::System<br/>(MCAL)
+
+    Note over OS: System-Start
+    OS->>Mcal: Mcal::System::init()
+    Note right of Mcal: Hardware-Initialisierung<br/>(PLL, Clocks, GPIO)
+    Mcal-->>OS: Initialisierung abgeschlossen
+
+    OS->>Task: xTaskCreate("SafetyTask", ...)
+    Note over OS: Scheduler laeuft
+
+    loop Alle 10 ms (vTaskDelay)
+        Task->>Srv: Srv::Monitor::runCycle()
+        Srv->>Mcal: Mcal::System::getSystemTick()
+        Mcal-->>Srv: uint32_t tick_count
+        Note right of Srv: Signalverarbeitung,<br/>Zustandsmaschine
+        Srv-->>Task: Zyklus abgeschlossen
+        Task->>Task: vTaskDelay(pdMS_TO_TICKS(10))
+    end
+\`\`\`
+
+### Initialisierungssequenz
+
+Der Systemstart in \`app_main()\` folgt einer deterministischen Reihenfolge:
+
+\`\`\`cpp
+void app_main(void) {
+    // 1. Hardware Initialisierung (MCAL)
+    Mcal::System::init();
+
+    // 2. Erstellen der OS Tasks
+    xTaskCreate(run_safety_task, "SafetyTask", 4096, nullptr, 5, nullptr);
+
+    // app_main endet hier, FreeRTOS Scheduler uebernimmt.
+}
+\`\`\`
+
+**Designentscheidung:** \`app_main()\` kehrt nach der Initialisierung zurueck. Ab diesem Zeitpunkt uebernimmt der FreeRTOS-Scheduler die vollstaendige Kontrolle ueber die Ausfuehrung. Dies entspricht dem Automotive-Paradigma, in dem die Startup-Sequenz strikt von der zyklischen Laufzeit getrennt ist.
+
+### Datenfluss-Konzept: \`std::optional\` statt roher Pointer
+
+Fuer die sichere Datenuebertragung zwischen Schichten wird \`std::optional<T>\` (C++17) als Rueckgabetyp empfohlen. Dies erzwingt eine explizite Plausibilitaetspruefung durch den Aufrufer und eliminiert Null-Pointer-Fehler zur Kompilierzeit.
+
+**Konzeptbeispiel** (architektonisches Muster fuer Erweiterungen):
+
+\`\`\`cpp
+// MCAL-Schicht: Hardware-Zugriff mit Fehlersignalisierung
+namespace Mcal {
+class Adc {
+   public:
+    static std::optional<float> readVoltage(uint8_t channel);
+};
+}  // namespace Mcal
+
+// Service-Schicht: Plausibilitaetspruefung ist erzwungen
+void Srv::Monitor::runCycle() {
+    auto voltage = Mcal::Adc::readVoltage(0);
+
+    if (voltage.has_value()) {
+        // Gueltig: Wert an Applikation weiterleiten
+        App::Core::processVoltage(voltage.value());
+    } else {
+        // Ungueltig: Fehlerbehandlung (Diagnostic Trouble Code)
+        App::Core::reportSensorFault(SensorId::ADC_CH0);
+    }
+}
+\`\`\`
+
+**Vorteile gegenueber C-Patterns:**
+
+| C-Pattern (unsicher)              | C++17-Pattern (sicher)                    |
+|-----------------------------------|-------------------------------------------|
+| \`float* readVoltage()\` (Null-Pointer moeglich) | \`std::optional<float> readVoltage()\` (Typensicher) |
+| Rueckgabewert kann ignoriert werden | Compiler warnt bei ungeprueftem Zugriff  |
+| Manuelle Fehlercodes (\`-1\`, \`0xFF\`) | Semantisch klar: \`has_value()\` / \`value()\` |
+
+### Schnittstellenmatrix
+
+| Aufrufer           | Schnittstelle                    | Richtung | Rueckgabe        | Beschreibung                        |
+|--------------------|----------------------------------|----------|-------------------|-------------------------------------|
+| \`main.cpp\`         | \`Mcal::System::init()\`          | Top-Down | \`void\`            | Einmalige Hardware-Initialisierung  |
+| \`main.cpp\`         | \`xTaskCreate(run_safety_task)\`   | Top-Down | \`BaseType_t\`      | OS-Task-Erzeugung                   |
+| \`run_safety_task\`  | \`Srv::Monitor::runCycle()\`      | Top-Down | \`void\`            | Zyklischer 10ms-Aufruf             |
+| \`Srv::Monitor\`     | \`Mcal::System::getSystemTick()\` | Top-Down | \`uint32_t\`        | Aktuelle FreeRTOS Tick-Zaehlung     |
+
+---
+
+## 1.3 Design-Constraints (Safety-Regeln)
+
+### Compiler-Konfiguration (\`platformio.ini\`)
+
+Die Build-Konfiguration erzwingt Safety-Konformitaet auf Compiler-Ebene. Jedes Flag ist eine bewusste Design-Entscheidung:
+
+\`\`\`ini
+[env:esp32s3-automotive]
+platform = espressif32
+board = seeed_xiao_esp32s3
+framework = espidf
+
+build_unflags = -std=gnu++11 -std=gnu++14 -std=c11
+build_flags =
+    -std=c11
+    -std=c++17
+    -DCORE_DEBUG_LEVEL=3
+    -Wall -Wextra -Werror
+    -Wno-unused-parameter
+    -fstack-protector-strong
+\`\`\`
+
+#### Flag-Analyse
+
+| Flag                      | Kategorie         | Zweck und Begruendung                                                                  |
+|---------------------------|-------------------|----------------------------------------------------------------------------------------|
+| \`-std=c++17\`              | Sprachstandard    | Aktiviert \`std::optional\`, \`constexpr if\`, \`[[nodiscard]]\`, strukturierte Bindings.     |
+| \`-std=c11\`                | Sprachstandard    | C11 fuer MCAL-nahen Code. Ersetzt GNU-Erweiterungen (\`gnu++11\`, \`gnu++14\`) durch Standard-konformen Code. |
+| \`build_unflags\`           | Hygiene           | Entfernt explizit die Default-Standards des ESP-IDF-Toolchains, um deterministische Kompilierung sicherzustellen. |
+| \`-Wall\`                   | Warnungen         | Aktiviert alle gaengigen Compiler-Warnungen (implizite Konvertierungen, fehlende Returns, etc.). |
+| \`-Wextra\`                 | Warnungen         | Aktiviert zusaetzliche Warnungen (ungenutzte Parameter, Vorzeichenvergleiche, etc.).   |
+| \`-Werror\`                 | **Safety-Gate**   | **Warnungen werden zu Fehlern.** Kein Build mit offenen Warnungen moeglich. Dies ist die zentrale Quality-Gate-Massnahme. |
+| \`-Wno-unused-parameter\`   | Ausnahme          | Erlaubt ungenutzte Parameter in Callback-Signaturen (z.B. FreeRTOS \`pvParameters\`). MISRA-konform durch expliziten \`(void)\`-Cast. |
+| \`-fstack-protector-strong\` | Laufzeitschutz   | Fuegt Stack-Canaries in Funktionen mit lokalen Arrays und Adressreferenzen ein. Erkennt Stack-Buffer-Overflows zur Laufzeit. |
+| \`-DCORE_DEBUG_LEVEL=3\`    | Diagnose          | Aktiviert ESP-IDF Logging bis Level \`INFO\`. Fuer Release-Builds auf \`0\` (stumm) zu setzen. |
+
+#### Safety-Regeln
+
+Die folgenden Regeln gelten als **verbindliche Design-Constraints** fuer das gesamte Projekt:
+
+1. **Kein Heap nach Init:** Nach Abschluss der Initialisierungsphase (\`app_main()\`) erfolgen keine dynamischen Speicherallokationen (\`malloc\`, \`new\`) mehr. Alle Ressourcen werden statisch oder auf dem Stack alloziert. Dies verhindert Speicherfragmentierung und nicht-deterministische Laufzeiten.
+
+2. **Keine Exceptions:** C++-Exceptions sind deaktiviert (ESP-IDF Default: \`CONFIG_COMPILER_CXX_EXCEPTIONS=n\`). Fehlerbehandlung erfolgt ueber Rueckgabewerte (\`std::optional\`, Error-Codes) oder \`static_assert\` zur Kompilierzeit.
+
+3. **\`-Werror\` als Quality Gate:** Kein Code mit offenen Compiler-Warnungen passiert den Build-Prozess. Dies erzwingt eine sofortige Behebung aller Warnungen (Shift-Left-Prinzip).
+
+4. **Deterministische Task-Konfiguration:** Feste Prioritaeten, feste Stack-Groessen, keine dynamische Task-Erzeugung zur Laufzeit.
+
+### Statische Analyse (\`check_tool\`)
+
+Die statische Analyse ist als integraler Bestandteil der Build-Pipeline konfiguriert:
+
+\`\`\`ini
+check_tool = cppcheck, clangtidy
+check_flags =
+    cppcheck: --std=c11 --std=c++17 --inline-suppr --enable=warning,style,performance,portability
+    clangtidy: --checks=-*,cert-*,clang-analyzer-*,bugprone-*,performance-*,readability-*
+\`\`\`
+
+#### Cppcheck-Konfiguration
+
+| Flag                | Beschreibung                                                            |
+|---------------------|-------------------------------------------------------------------------|
+| \`--std=c11\`         | Analyse gegen C11-Standard (fuer MCAL-Code).                           |
+| \`--std=c++17\`       | Analyse gegen C++17-Standard (fuer Application/Service-Code).          |
+| \`--inline-suppr\`    | Erlaubt gezielte Unterdrueckung einzelner Warnungen im Code (\`// cppcheck-suppress\`). Jede Unterdrueckung muss begruendet werden. |
+| \`--enable=warning\`  | Aktiviert alle Warnungen, die auf moegliche Fehler hinweisen.          |
+| \`--enable=style\`    | Prueft Coding-Style-Regeln (Konsistenz, Lesbarkeit).                   |
+| \`--enable=performance\` | Erkennt Performance-Probleme (unnoetige Kopien, ineffiziente Konstrukte). |
+| \`--enable=portability\`  | Warnt bei plattformabhaengigem Verhalten (Datentyp-Groessen, Alignment). |
+
+#### Clang-Tidy-Konfiguration
+
+Die Clang-Tidy-Checks sind modular aktiviert. Zunaechst werden alle Checks deaktiviert (\`-*\`), dann gezielt sicherheitsrelevante Check-Familien aktiviert:
+
+| Check-Familie        | Beschreibung                                                              |
+|----------------------|---------------------------------------------------------------------------|
+| \`cert-*\`             | CERT C/C++ Secure Coding Standard. Prueft gegen bekannte Sicherheitsluecken (Buffer-Overflows, Integer-Overflows, Use-after-Free). |
+| \`clang-analyzer-*\`   | Clang Static Analyzer. Tiefe Datenfluss-Analyse: erkennt Null-Pointer-Dereferenzierungen, Memory-Leaks, tote Code-Pfade. |
+| \`bugprone-*\`         | Erkennt fehleranfaellige Muster: versehentliche Kopien, falsche Vergleiche, implizite Konvertierungen. |
+| \`performance-*\`      | Identifiziert Performance-Anti-Patterns: unnoetige Kopien, fehlende Move-Semantik, ineffiziente Container-Nutzung. |
+| \`readability-*\`      | Erzwingt Lesbarkeit: konsistente Benennung, explizite Casts, keine Magic Numbers. |
+
+### Code-Formatierung (\`.clang-format\`)
+
+Die Formatierungsregeln sind als Datei \`.clang-format\` im Projekt-Root definiert und werden automatisch angewendet:
+
+\`\`\`yaml
+BasedOnStyle: Google
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+BreakBeforeBraces: Attach
+PointerAlignment: Left
+SortIncludes: true
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+\`\`\`
+
+#### Regel-Analyse
+
+| Regel                              | Wert      | Begruendung (Safety-Bezug)                                          |
+|------------------------------------|-----------|---------------------------------------------------------------------|
+| \`BasedOnStyle: Google\`             | Google    | Robuste Basis. Google C++ Style Guide ist weitverbreitet und gut dokumentiert. |
+| \`IndentWidth: 4\`                   | 4 Spaces  | Standard im Embedded-Bereich. Erhoehte Lesbarkeit gegenueber 2 Spaces (Google Default). |
+| \`UseTab: Never\`                    | Never     | Konsistente Darstellung unabhaengig vom Editor. Tabs fuehren zu inkonsistenten Reviews. |
+| \`ColumnLimit: 100\`                 | 100       | Kompromiss: 80 Zeichen ist zu restriktiv fuer sprechende C++-Bezeichner; 120 erschwert Side-by-Side-Diffs. |
+| \`BreakBeforeBraces: Attach\`        | Attach    | Klammer in gleicher Zeile. Spart vertikalen Platz, Standard in modernen C++ Guidelines. |
+| \`PointerAlignment: Left\`           | Left      | \`int* ptr\` statt \`int *ptr\`. Betont den Typ, konsistent mit C++17-Deklarationsstil. |
+| \`SortIncludes: true\`               | true      | Alphabetische Sortierung der Includes. Verhindert Duplikate und erleichtert Reviews. |
+| \`AllowShortBlocksOnASingleLine\`    | Never     | **Safety-Regel:** Einzeiler fuer Bloecke verboten. Erzwingt geschweifte Klammern, verhindert Dangling-Else und fehlende Fehlerbehandlung. |
+| \`AllowShortFunctionsOnASingleLine\` | None      | **Safety-Regel:** Keine einzeiligen Funktionen. Jede Funktion hat einen expliziten Body mit Klammern. |
+| \`AllowShortIfStatementsOnASingleLine\` | Never  | **Safety-Regel:** Kein \`if (x) return;\` in einer Zeile. Reduziert Fehler bei spaeterer Code-Erweiterung. |
+| \`AllowShortLoopsOnASingleLine\`     | false     | **Safety-Regel:** Keine einzeiligen Schleifen. Explizite Block-Struktur fuer alle Kontrollfluss-Anweisungen. |
+
+### Zusammenfassung der Quality Gates
+
+\`\`\`mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#e5e5e5',
+    'primaryTextColor': '#000000',
+    'primaryBorderColor': '#333333',
+    'lineColor': '#333333',
+    'noteBkgColor': '#f4f4f4',
+    'noteTextColor': '#333333',
+    'noteBorderColor': '#666666'
+  }
+}}%%
+sequenceDiagram
+    participant Dev as Entwickler
+    participant Fmt as clang-format<br/>(Formatierung)
+    participant Lint as cppcheck +<br/>clang-tidy
+    participant Comp as GCC Xtensa<br/>(-Werror)
+    participant Bin as Binary<br/>(firmware.bin)
+
+    Dev->>Fmt: Code speichern
+    Fmt-->>Dev: Automatische Formatierung
+
+    Dev->>Lint: pio check
+    Lint-->>Dev: Statische Analyse<br/>(CERT, Bugprone, Performance)
+    Note right of Lint: Gate 1: Kein Code mit<br/>bekannten Defect-Patterns
+
+    Dev->>Comp: pio run
+    Comp-->>Dev: -Werror: Warnungen = Fehler
+    Note right of Comp: Gate 2: Kein Code mit<br/>offenen Compiler-Warnungen
+
+    Comp->>Bin: Build erfolgreich
+    Note right of Bin: Gate 3: Nur validierter<br/>Code wird deployed
+\`\`\`
+
+---
+
+*Dokument erstellt im Rahmen des Automotive Software Demonstrators (QM). Methodische Grundlage: ISO 26262 Part 6 (Software Development).*
+`,
+            `# 2. Benutzerhandbuch
+
+**Zielgruppe:** Entwickler, Integratoren
+**Zweck:** Reproduzierbarkeit der Build-Umgebung sicherstellen und den vollstaendigen Workflow von der Installation bis zur statischen Analyse dokumentieren.
+
+---
+
+## 2.1 Voraussetzungen (Prerequisites)
+
+### Hardware
+
+| Komponente | Beschreibung |
+|---|---|
+| **Board** | Seeed Studio XIAO ESP32-S3 |
+| **USB-Kabel** | USB-C Datenkabel (kein reines Ladekabel) |
+| **Verbindung** | USB-C direkt am Entwicklungsrechner (kein Hub empfohlen) |
+
+### Software
+
+| Komponente | Version / Hinweis |
+|---|---|
+| **VS Code** | Aktuelle stabile Version (>= 1.85) |
+| **PlatformIO IDE** | VS Code Extension (installiert Toolchain automatisch) |
+| **Espressif 32 Platform** | v6.x (wird durch PlatformIO aufgeloest) |
+| **GCC Toolchain** | >= v11 mit C++17-Unterstuetzung (automatisch durch PlatformIO) |
+| **Python** | >= 3.8 (Voraussetzung fuer PlatformIO Core) |
+
+### Betriebssystem-Anforderungen
+
+- **macOS:** >= 12 (Monterey) -- USB-Treiber nativ vorhanden
+- **Linux:** >= Ubuntu 22.04 oder vergleichbar -- ggf. \`udev\`-Regeln fuer ESP32 setzen
+- **Windows:** >= Windows 10 -- USB-Treiber werden durch PlatformIO installiert
+
+> **Hinweis:** Unter Linux muessen ggf. Berechtigungen fuer den seriellen Port gesetzt werden:
+> \`\`\`bash
+> sudo usermod -aG dialout \$USER
+> \`\`\`
+> Anschliessend ist ein Neustart der Sitzung erforderlich.
+
+---
+
+## 2.2 Installation und Build
+
+### Schritt 1: Repository klonen
+
+Klonen Sie das Repository in ein lokales Verzeichnis:
+
+\`\`\`bash
+git clone <REPOSITORY_URL> AutomotiveDemo
+cd AutomotiveDemo
+\`\`\`
+
+### Schritt 2: Projekt in VS Code oeffnen
+
+Oeffnen Sie das Projektverzeichnis in VS Code:
+
+\`\`\`bash
+code AutomotiveDemo
+\`\`\`
+
+Warten Sie, bis PlatformIO die Indexierung abgeschlossen hat. In der Statusleiste erscheint das PlatformIO-Symbol. Beim ersten Oeffnen laedt PlatformIO automatisch:
+
+- Die Espressif 32 Platform (v6.x)
+- Die GCC-Toolchain (>= v11)
+- Das ESP-IDF Framework
+- Alle projektspezifischen Abhaengigkeiten
+
+Dieser Vorgang kann beim ersten Mal mehrere Minuten dauern.
+
+### Schritt 3: Build ausfuehren
+
+Fuehren Sie den Build ueber das Terminal aus:
+
+\`\`\`bash
+pio run
+\`\`\`
+
+**Erwartetes Ergebnis:**
+
+\`\`\`
+Environment       Status    Duration
+----------------  --------  ----------
+esp32s3-automotive  SUCCESS   XX.XXs
+========================= 1 succeeded in XXs =========================
+\`\`\`
+
+Jeder Build-Lauf muss mit \`SUCCESS\` abschliessen. Ein Fehlschlag ist ein Blocker und muss vor dem Fortfahren behoben werden.
+
+### Schritt 4: Firmware flashen
+
+Verbinden Sie das Board per USB-C und flashen Sie die Firmware:
+
+\`\`\`bash
+pio run --target upload
+\`\`\`
+
+> **Hinweis:** Falls das Board nicht erkannt wird, pruefen Sie den USB-Port mit \`pio device list\`.
+
+### Schritt 5: Seriellen Monitor starten
+
+Starten Sie den seriellen Monitor zur Laufzeitbeobachtung:
+
+\`\`\`bash
+pio device monitor
+\`\`\`
+
+Die Monitor-Konfiguration ist in \`platformio.ini\` definiert:
+
+| Parameter | Wert | Bedeutung |
+|---|---|---|
+| \`monitor_speed\` | \`115200\` | Baudrate der seriellen Schnittstelle |
+| \`monitor_filters\` | \`direct\` | Rohdaten ohne Transformation |
+| | \`esp32_exception_decoder\` | Automatische Dekodierung von Stack-Traces bei Abstuerzen |
+
+Der \`esp32_exception_decoder\`-Filter ist besonders wertvoll: Bei einem Absturz (Panic, Stack Overflow, etc.) werden die Speicheradressen im Stack-Trace automatisch in Dateinamen und Zeilennummern aufgeloest.
+
+Beenden Sie den Monitor mit \`Ctrl+C\`.
+
+### Build-Konfiguration im Detail
+
+Die Build-Konfiguration in \`platformio.ini\` setzt bewusst strenge Compiler-Einstellungen:
+
+\`\`\`ini
+build_unflags = -std=gnu++11 -std=gnu++14 -std=c11
+build_flags =
+    -std=c11
+    -std=c++17
+    -DCORE_DEBUG_LEVEL=3
+    -Wall -Wextra -Werror
+    -Wno-unused-parameter
+    -fstack-protector-strong
+\`\`\`
+
+| Flag | Bedeutung |
+|---|---|
+| \`-std=c11\` | C-Quellen werden im ISO C11 Standard kompiliert |
+| \`-std=c++17\` | C++-Quellen werden im ISO C++17 Standard kompiliert |
+| \`-DCORE_DEBUG_LEVEL=3\` | ESP-IDF Debug-Level auf \`INFO\` (0=None, 1=Error, 2=Warn, 3=Info, 4=Debug, 5=Verbose) |
+| \`-Wall\` | Aktiviert alle gaengigen Compiler-Warnungen |
+| \`-Wextra\` | Aktiviert zusaetzliche Warnungen ueber \`-Wall\` hinaus |
+| \`-Werror\` | Behandelt **jede Warnung als Fehler** -- der Build schlaegt bei Warnungen fehl |
+| \`-Wno-unused-parameter\` | Ausnahme: Unbenutzte Parameter werden toleriert (notwendig fuer FreeRTOS-Task-Signaturen) |
+| \`-fstack-protector-strong\` | Aktiviert Stack-Schutz gegen Buffer-Overflow-Angriffe zur Laufzeit |
+
+Die Kombination aus \`-Wall -Wextra -Werror\` erzwingt sauberen Code: Kein Commit darf Warnungen enthalten. Die \`build_unflags\`-Direktive entfernt zuvor gesetzte GNU-Standards, damit die expliziten ISO-Standards (\`-std=c11\`, \`-std=c++17\`) greifen.
+
+\`-fstack-protector-strong\` fuegt Laufzeit-Pruefungen in Funktionen mit lokalen Puffern ein. Bei einem erkannten Stack-Buffer-Overflow wird die Ausfuehrung kontrolliert abgebrochen, anstatt undefiniertes Verhalten zuzulassen.
+
+---
+
+## 2.3 Statische Analyse ausfuehren (Quality Gate)
+
+Die statische Analyse ist ein verpflichtender Qualitaets-Gate: Kein Code darf integriert werden, der High- oder Medium-Befunde erzeugt.
+
+### Analyse starten
+
+Fuehren Sie die statische Analyse aus:
+
+\`\`\`bash
+pio check
+\`\`\`
+
+### Konfiguration
+
+Die Analyse-Werkzeuge sind in \`platformio.ini\` konfiguriert:
+
+\`\`\`ini
+check_tool = cppcheck, clangtidy
+check_flags =
+    cppcheck: --std=c11 --std=c++17 --inline-suppr --enable=warning,style,performance,portability
+    clangtidy: --checks=-*,cert-*,clang-analyzer-*,bugprone-*,performance-*,readability-*
+\`\`\`
+
+#### cppcheck
+
+| Flag | Bedeutung |
+|---|---|
+| \`--std=c11 --std=c++17\` | Analyse gegen die verwendeten Sprachstandards |
+| \`--inline-suppr\` | Erlaubt Unterdrueckung einzelner Befunde direkt im Quellcode |
+| \`--enable=warning\` | Erkennung potentieller Fehler |
+| \`--enable=style\` | Stilverbesserungen und Best Practices |
+| \`--enable=performance\` | Performance-Probleme (z.B. unnoetige Kopien) |
+| \`--enable=portability\` | Portabilitaetsprobleme zwischen Plattformen/Compilern |
+
+#### clang-tidy
+
+Die Pruefungen sind nach Kategorien aktiviert:
+
+| Kategorie | Bedeutung |
+|---|---|
+| \`cert-*\` | Regeln nach CERT C/C++ Coding Standard (Sicherheitskritische Konstrukte) |
+| \`clang-analyzer-*\` | Clang Static Analyzer (Pfadbasierte Analyse fuer Null-Pointer, Memory Leaks, etc.) |
+| \`bugprone-*\` | Erkennung fehleranfaelliger Muster (z.B. unbeabsichtigte Kopien, falsche Vergleiche) |
+| \`performance-*\` | Performance-Anti-Patterns (z.B. unnoetige Kopien, ineffiziente Container-Nutzung) |
+| \`readability-*\` | Lesbarkeitsregeln (z.B. konsistente Benennung, Magic Numbers) |
+
+Das Praefix \`-*\` deaktiviert zuerst alle Pruefungen, anschliessend werden gezielt die genannten Kategorien aktiviert. Dieses Whitelist-Prinzip stellt sicher, dass nur beherrschbare Regelsaetze aktiv sind.
+
+### Erwartetes Ergebnis
+
+\`\`\`
+Checking esp32s3-automotive > cppcheck ...
+Checking esp32s3-automotive > clangtidy ...
+========================= [PASSED] Took XX.XXs =========================
+\`\`\`
+
+### Interpretation der Ergebnisse
+
+PlatformIO klassifiziert Befunde in drei Schweregrade:
+
+| Schweregrad | Bewertung | Aktion |
+|---|---|---|
+| **High** | Kritischer Fehler oder Sicherheitsrisiko | Muss behoben werden -- Blocker |
+| **Medium** | Potentieller Fehler oder schlechte Praxis | Muss behoben werden -- Blocker |
+| **Low** | Stilistischer Hinweis oder Verbesserungsvorschlag | Sollte behoben werden -- kein Blocker |
+
+**Regel:** Kein Code mit High- oder Medium-Befunden darf integriert werden.
+
+### Fehlerbehebung und Unterdrueckung
+
+#### Vorgehen bei Befunden
+
+1. **Analysieren:** Lesen Sie die Meldung und den betroffenen Code
+2. **Beheben:** Korrigieren Sie den Code, wenn der Befund berechtigt ist
+3. **Erneut pruefen:** Fuehren Sie \`pio check\` erneut aus
+4. **Unterdruecken:** Nur wenn der Befund ein False Positive ist (siehe unten)
+
+#### Unterdrueckung mit Begruendung
+
+In seltenen Faellen liefern die Analyse-Werkzeuge False Positives -- z.B. bei Hardware-nahen Konstrukten, die das Werkzeug nicht korrekt interpretieren kann. In solchen Faellen ist eine gezielte Unterdrueckung erlaubt, aber **nur mit dokumentierter Begruendung**.
+
+**cppcheck** -- Unterdrueckung im Quellcode mit \`// cppcheck-suppress\`:
+
+\`\`\`cpp
+// cppcheck-suppress missingReturn  // False Positive: noreturn-Funktion, Endlosschleife beabsichtigt
+void run_safety_task(void* pvParameters) {
+    while (true) {
+        // ...
+    }
+}
+\`\`\`
+
+**clang-tidy** -- Unterdrueckung im Quellcode mit \`// NOLINT\`:
+
+\`\`\`cpp
+void app_main(void) {  // NOLINT(readability-identifier-naming) -- ESP-IDF API-Konvention
+    // ...
+}
+\`\`\`
+
+> **Regel:** Jede Unterdrueckung muss eine Begruendung im Kommentar enthalten. Unterdrueckungen ohne Begruendung werden im Code-Review abgelehnt. Die Begruendung muss erklaeren, warum der Befund ein False Positive ist oder warum die Abweichung technisch notwendig ist.
+`,
+            `# 3. Abschlussbericht (Die kritische Distanz)
+
+> **Zielgruppe:** Pruefer, Senior Engineers, HR
+> **Zweck:** Einordnung der Leistung -- Unterschied zwischen "Basteln" und "Engineering"
+
+---
+
+## 3.1 Methodik
+
+### QM-Demonstrator-Ansatz
+
+Es wurde ein **"Quality Managed" (QM) Demonstrator** auf Basis eines ESP32-S3 entwickelt. Ziel war die Anwendung von ISO-26262-Methodiken (V-Modell, Coding Standards, Statische Analyse) auf einer COTS-Hardware-Plattform.
+
+Der gewaehlte Ansatz trennt bewusst zwischen dem, was die Hardware leisten kann (QM-Niveau), und dem, was die Software-Prozesse bereits vorwegnehmen (ASIL-Methodik). Diese Trennung ist kein Kompromiss, sondern eine ingenieurtechnische Entscheidung: Die Software-Architektur wird so entwickelt, als waere sie fuer eine sicherheitszertifizierte Plattform bestimmt -- auch wenn die darunterliegende Hardware diese Zertifizierung nicht unterstuetzt.
+
+### Angewandte Methodiken
+
+**V-Modell-Anwendung:**
+Das Projekt folgt dem klassischen V-Modell der Automobilindustrie. Die linke Seite (Spezifikation) umfasst Anforderungsanalyse, Systemdesign und Moduldesign. Die rechte Seite (Verifikation) spiegelt diese Ebenen durch Modul-, Integrations- und Systemtests wider. Die Implementierung bildet den Tiefpunkt des V. Jede Design-Ebene hat einen korrespondierenden Test-Level -- eine Grundvoraussetzung fuer jede ISO-26262-konforme Entwicklung.
+
+**Coding Standards (MISRA C++ Anlehnung):**
+Der Code orientiert sich an MISRA C++:2023 Richtlinien, soweit auf einer nicht-zertifizierten Toolchain praktikabel. Konkrete Massnahmen:
+
+- Explizites Casten ungenutzter Parameter mit \`(void)\` (MISRA-konform)
+- Vermeidung dynamischer Speicherallokation im laufenden Betrieb
+- Strikte Typisierung durch \`constexpr\` statt \`#define\`
+- Verwendung von \`std::optional\` zur erzwungenen Plausibilitaetspruefung
+- \`static_assert\` fuer Architektur-Checks zur Kompilierzeit
+
+**Statische Analyse:**
+Die PlatformIO Build-Pipeline integriert zwei unabhaengige statische Analysewerkzeuge:
+
+| Werkzeug | Pruefumfang | Konfiguration |
+|---|---|---|
+| **Cppcheck** | Portabilitaet, Performance, Style, Warnungen | \`--std=c11 --std=c++17 --enable=warning,style,performance,portability\` |
+| **Clang-Tidy** | CERT-Regeln, Bugprone-Patterns, Security | \`cert-*, clang-analyzer-*, bugprone-*, performance-*, readability-*\` |
+
+Zusaetzlich gilt die Build-Policy \`-Werror\`: Jede Compiler-Warnung bricht den Build ab. Dies erzwingt eine konsequente Null-Warnungen-Politik und verhindert, dass technische Schulden ueber Warnungen akkumulieren.
+
+**ISO 26262 auf COTS-Hardware:**
+Die zentrale These dieses Projekts lautet: Die Methodik ist unabhaengig von der Hardware portierbar. Der ESP32-S3 dient als kosteneffiziente Entwicklungsplattform, auf der die Software-Prozesse (Schichtenmodell, defensive Programmierung, statische Analyse) vollstaendig angewandt werden. Der Wechsel auf eine ASIL-zertifizierte MCU (z.B. Infineon Aurix, NXP S32K) wuerde lediglich den MCAL-Layer betreffen -- die Applikationslogik und der Service-Layer bleiben unveraendert.
+
+---
+
+## 3.2 Kritische Distanz: Prototyp vs. Serie
+
+### Gap-Analyse
+
+Die folgende Tabelle stellt den realisierten Prototypen dem Zielbild einer serienfaehigen ASIL-D-Entwicklung gegenueber. Diese ehrliche Analyse ist entscheidend, um die **tatsaechliche Tragweite** des Demonstrators korrekt einzuordnen.
+
+| Kriterium | Realisierung im Projekt (ESP32) | Anforderung ISO 26262 (ASIL-D Serie) | Bewertung der Luecke |
+|---|---|---|---|
+| **Hardware** | ESP32-S3 (Single/Dual Core, kein Lockstep) | Infineon Aurix / NXP S32 (Lockstep Cores, ECC-RAM) | **Kritisch:** Hardware erkennt Rechenfehler nicht selbststaendig. Nur fuer QM/ASIL-A geeignet. |
+| **OS / Scheduler** | FreeRTOS (Praeemptiv, generisch) | AUTOSAR OS / SAFERTOS (Zeitlich/Raeumlich partitioniert) | **Mittel:** FreeRTOS bietet keine garantierte Trennung (Memory Protection) zwischen Tasks. |
+| **Fehlerbehandlung** | Software-Checks (\`if\`, \`std::optional\`) | E-Gas Monitoring (3-Ebenen-Konzept), Watchdogs | **Hoch:** Im Projekt fehlt eine unabhaengige Ueberwachungsinstanz (externer Watchdog/PMIC). |
+| **Compiler** | GCC (Open Source) | Zertifizierter Compiler (z.B. Tasking, Green Hills) | **Formal:** GCC fehlt das "Tool Qualification Kit" fuer den Sicherheitsnachweis. |
+| **Speicher** | SRAM ohne ECC | ECC-RAM mit Fehlerkorrektur | **Kritisch:** Bit-Flips durch kosmische Strahlung oder EMV werden nicht erkannt. |
+| **Diagnose** | ESP-IDF Logging (\`ESP_LOGI\`) | UDS/OBD-Diagnosestack (ISO 14229) | **Hoch:** Keine standardisierte Fahrzeugdiagnose moeglich. |
+| **Kommunikation** | UART/WiFi (nicht deterministisch) | CAN-FD / FlexRay (deterministisch, CRC-gesichert) | **Hoch:** Keine Echtzeitfaehigkeit auf Bus-Ebene. |
+
+### Architekturvergleich: Prototyp (SMP) vs. Serie (Lockstep)
+
+Das folgende Diagramm visualisiert den fundamentalen Hardware-Unterschied zwischen dem ESP32-S3-Prototyp und einer Automotive-Serien-MCU mit Lockstep-Architektur:
+
+\`\`\`mermaid
+%%{init: {"theme":"neutral","flowchart":{"nodeSpacing":40,"rankSpacing":55}}}%%
+flowchart LR
+  classDef greyBox fill:#f9f9f9,stroke:#333,stroke-width:2px;
+  classDef highlight fill:#e0e0e0,stroke:#000,stroke-width:3px;
+  classDef danger fill:#fff0f0,stroke:#cc0000,stroke-width:2px;
+  classDef safe fill:#f0fff0,stroke:#006600,stroke-width:2px;
+  classDef spacer fill:none,stroke:none,color:transparent;
+
+  subgraph P["Prototyp (ESP32-S3 / QM)"]
+    direction TB
+
+    PFRAME["MM"]:::spacer
+
+    subgraph P_SMP["SMP-Modus (Unabhaengig)"]
+      direction TB
+      C0["Kern 0<br/>(App Core)"]:::greyBox
+      C1["Kern 1<br/>(WiFi Core)"]:::greyBox
+    end
+    RAM1["SRAM<br/>(Kein ECC)"]:::danger
+
+    C0 -.->|"Schreibt"| RAM1
+    C1 -.->|"Schreibt"| RAM1
+
+    PH1["M"]:::spacer
+    PH2["M"]:::spacer
+    PH1 ~~~ PH2
+  end
+
+  subgraph S["Serie (z.B. Infineon Aurix / ASIL-D)"]
+    direction TB
+
+    SFRAME["MMMMMMMMMMMMMMMM"]:::spacer
+
+    subgraph S_LOCK["Lockstep-Modus"]
+      direction TB
+      Master["Kern A<br/>(Master)"]:::greyBox
+      Checker["Kern B<br/>(Checker)"]:::greyBox
+      Comp{"Vergleich<br/>(Comparator)"}:::highlight
+    end
+    RAM2["ECC-RAM<br/>(Fehlerkorrektur)"]:::safe
+    Trap(("Reset / Safe State")):::highlight
+
+    Master --> Comp
+    Checker --> Comp
+    Comp -->|"OK"| RAM2
+    Comp -->|"Fehler!"| Trap
+  end
+\`\`\`
+
+**Interpretation des Diagramms:**
+
+- **Links (Prototyp):** Die beiden Kerne des ESP32-S3 arbeiten im SMP-Modus (Symmetric Multiprocessing). Beide Kerne greifen unabhaengig auf denselben SRAM zu. Es gibt **keinen Mechanismus**, der erkennt, ob ein Kern ein falsches Ergebnis berechnet hat. Ein korruptes Rechenergebnis wird direkt in den Speicher geschrieben.
+
+- **Rechts (Serie):** In einer Lockstep-Architektur fuehren beide Kerne **identische Instruktionen** aus. Ein Hardware-Comparator vergleicht die Ergebnisse taktzyklus-genau. Bei einer Abweichung (Mismatch) wird sofort ein Trap ausgeloest, der das System in einen sicheren Zustand (Safe State) ueberfuehrt. Der ECC-RAM erkennt und korrigiert zusaetzlich Speicherfehler.
+
+Dies ist die **fundamentale Luecke** des Prototyps: Ohne Lockstep und ECC ist eine Fehlererkennung auf Hardware-Ebene nicht moeglich. Die im Projekt implementierten Software-Checks (\`std::optional\`, Plausibilitaetspruefungen) koennen diese Luecke nur teilweise und nur fuer systematische Fehler kompensieren -- nicht fuer zufaellige Hardware-Fehler (Random Hardware Failures).
+
+### Einordnung nach ASIL-Stufen
+
+| ASIL-Stufe | Typische Funktion | Geeignete Hardware | Projektbewertung |
+|---|---|---|---|
+| **QM** | Infotainment, Sitzheizung | ESP32, STM32 (ohne Safety) | Voll geeignet |
+| **ASIL-A** | Innenlicht, Komfortfunktionen | STM32 mit Safety-Features | Bedingt geeignet (mit Einschraenkungen) |
+| **ASIL-B** | ABS, ESP | Aurix (Lockstep), S32K | Nicht geeignet (Hardware-Limit) |
+| **ASIL-D** | Airbag, Lenkung, Bremse | Aurix (Lockstep + ECC + BIST) | Nicht geeignet (Hardware-Limit) |
+
+---
+
+## 3.3 Fazit und Ausblick
+
+### Ergebnis
+
+Der Einsatz von **C++17 in Kombination mit MISRA-Anlehnung** erhoet die Code-Qualitaet signifikant gegenueber klassischem C-Code auf Embedded-Systemen. Die konkreten Verbesserungen sind messbar:
+
+- **Kompilierzeit-Absicherung:** \`static_assert\` und \`constexpr\` verlagern Fehlererkennung von der Laufzeit in die Build-Phase. Architektur-Inkompatibilitaeten werden ausgeschlossen, bevor eine einzige Zeile auf dem Target laeuft.
+- **Typensicherheit:** Starke Typisierung durch C++17 eliminiert eine ganze Fehlerklasse (implizite Konvertierungen, Makro-Seiteneffekte), die in Legacy-C-Projekten haeufig zu schwer reproduzierbaren Laufzeitfehlern fuehrt.
+- **Determinismus:** Feste Task-Prioritaeten, definierte Zykluszeiten (10ms), und der Verzicht auf dynamische Speicherallokation im Betrieb schaffen ein vorhersagbares Systemverhalten -- eine Grundvoraussetzung fuer jede sicherheitsrelevante Software.
+
+### Limitation
+
+Die ehrliche Einschraenkung: Fuer eine Serienfertigung ist ein **Hardware- und OS-Wechsel zwingend erforderlich**. Der ESP32-S3 kann die Anforderungen ab ASIL-B schlicht nicht erfuellen -- nicht wegen der Software, sondern wegen der fehlenden Hardware-Safety-Mechanismen (Lockstep, ECC, BIST). Ebenso muesste FreeRTOS durch ein zeitlich und raeumlich partitionierendes Betriebssystem (AUTOSAR OS, SAFERTOS) ersetzt werden, um die geforderte Freedom from Interference nachzuweisen.
+
+### Portierbarkeit der Software-Architektur
+
+Der entscheidende Mehrwert des Projekts liegt in der **Portierbarkeit des Schichtenmodells**. Die 3-Schichten-Architektur wurde exakt fuer diesen Zweck entworfen:
+
+| Schicht | Portierungsaufwand | Begruendung |
+|---|---|---|
+| **Application Core** (\`App_\`) | Keiner | Reine C++17-Logik, keine Hardware-Abhaengigkeit. Laeuft unveraendert auf x86, ARM Cortex-R, Xtensa. |
+| **Service Layer** (\`Srv_\`) | Minimal | Timing-Abstraktion muss an neues OS angepasst werden (z.B. \`vTaskDelay\` -> AUTOSAR \`Schedule()\`). |
+| **MCAL** (\`Mcal_\`) | Vollstaendig | Muss komplett neu implementiert werden fuer Ziel-MCU (Register, Treiber, Peripherie). |
+
+Diese Tabelle zeigt: Bei einem Wechsel auf eine ASIL-D-MCU bleiben ca. 70% des Software-Stacks (Application + Service Layer) validiert und wiederverwendbar. Nur der MCAL muss neu entwickelt und getestet werden. Das ist der Kernbeweis dafuer, dass die Architektur korrekt abstrahiert.
+
+### Naechster Schritt: Portierung auf ASIL-D MCU
+
+Der logische naechste Schritt ist die Portierung auf eine sicherheitszertifizierte Mikrocontroller-Plattform. Als Zielplattform bietet sich die **NXP S32K3-Familie** an:
+
+1. **Hardware-Qualifikation:** NXP S32K3 verfuegt ueber Lockstep Cores, ECC-RAM, und ein integriertes Safety-Konzept (FCCU -- Fault Collection and Control Unit).
+2. **OS-Migration:** Wechsel von FreeRTOS auf AUTOSAR OS oder SAFERTOS mit MPU-basierter Partitionierung.
+3. **Compiler-Wechsel:** Migration von GCC auf einen zertifizierten Compiler (z.B. NXP GreenBox, IAR Embedded Workbench mit Safety-Zertifikat).
+4. **Validierung:** Der Application Core wird auf der neuen Plattform ohne Code-Aenderungen deployed -- die erfolgreiche Kompilierung und Ausfuehrung waere der endgueltige Nachweis der Portierbarkeit.
+
+### Schlussbewertung
+
+Dieses Projekt demonstriert nicht das Blinken einer LED. Es demonstriert die **methodische Kompetenz**, Software nach Automotive-Standards zu entwickeln. Die Differenzierung zwischen Prototyp und Serie ist dabei kein Mangel, sondern Teil der Methodik: Wer die Grenzen seines Systems praezise benennen kann, hat das System verstanden.
+
+> Die Hardware ist austauschbar. Die Methodik ist bleibend.
+
+---
+
+*Dokument erstellt im Rahmen des Automotive Software Demonstrators (QM)*
+*Klassifikation: Vertraulich -- Nur fuer Pruefer und autorisiertes Personal*
+`,
+            `# 4. Methodische Herleitung der C++17 Entscheidung
+
+## 4.1 Problemstellung: Die Grenzen von ANSI-C in sicherheitskritischen Systemen
+
+Die klassische Embedded-Entwicklung basiert historisch auf ANSI-C (C90/C99). In sicherheitskritischen Domaenen wie der Automobilindustrie offenbart dieser Ansatz jedoch strukturelle Schwaechen, die mit steigender Systemkomplexitaet zunehmend kritisch werden.
+
+### Legacy C90/C99: Praeprocessor-Makros als Fehlerquelle
+
+In klassischem C werden Konstanten, Konfigurationsparameter und sogar einfache Funktionen ueber Praeprocessor-Makros (\`#define\`) realisiert. Dies fuehrt zu einer Reihe systemischer Probleme:
+
+\`\`\`c
+/* Legacy C Ansatz -- typische Embedded-Konfiguration */
+#define CYCLE_TIME_MS   10
+#define STACK_SIZE      4096
+#define TASK_PRIORITY   5
+#define MAX_SENSORS     8
+\`\`\`
+
+Diese Definitionen sind **reine Textersetzungen** ohne jede semantische Pruefung durch den Compiler. Der Praeprocessor operiert vor der eigentlichen Kompilierung und erzeugt dabei unsichtbare Fehlerquellen:
+
+- **Keine Typbindung:** \`CYCLE_TIME_MS\` kann versehentlich als Pointer-Offset, Array-Index oder Gleitkommazahl verwendet werden -- der Compiler meldet keinen Fehler.
+- **Keine Scope-Kontrolle:** Makros gelten global und koennen in jeder Uebersetzungseinheit kollidieren.
+- **Debugging-Erschwernis:** Im Debugger existiert der Symbolname \`CYCLE_TIME_MS\` nicht; der Entwickler sieht nur die Zahl \`10\` ohne Kontext.
+
+### Mangelnde Typsicherheit
+
+Ein besonders kritisches Beispiel ist die implizite Konvertierung bei Makro-Ausdruecken:
+
+\`\`\`c
+/* Gefaehrlich: Implizite Konvertierung ohne Warnung */
+#define TIMEOUT_MS  100
+uint8_t timer = TIMEOUT_MS;  /* Stille Trunkierung bei Werten > 255 */
+\`\`\`
+
+Der Compiler fuehrt hier eine **stille Trunkierung** durch. Wenn \`TIMEOUT_MS\` auf einen Wert groesser 255 geaendert wird, geht die Information verloren -- ohne Warnung, ohne Fehler. In einem Bremssystem-Steuergeraet waere dies ein potentiell sicherheitsrelevanter Defekt.
+
+### Spaete Fehlererkennung: Runtime statt Compile-Time
+
+In klassischem C werden viele Invarianten erst zur Laufzeit geprueft:
+
+\`\`\`c
+/* C: Laufzeitpruefung -- Fehler erst auf der Zielhardware sichtbar */
+void init_register(void) {
+    if (sizeof(void*) != 4) {
+        /* Fehler: Falsche Architektur */
+        error_handler();  /* Wird erst beim Ausfuehren erreicht */
+    }
+}
+\`\`\`
+
+Diese Pruefung wird erst ausgefuehrt, wenn der Code **auf der Zielhardware laeuft** -- also in der Hardware-Integrationsphase (HW-Integration). Gemaess dem V-Modell ist dies eine der teuersten Phasen fuer die Fehlerbehebung. Die Kosten-Eskalation folgt der bekannten "Rule of Ten": Ein Fehler, der in der Spezifikation 1 EUR kostet, kostet in der Integration 100 EUR und im Feld 10.000 EUR.
+
+---
+
+## 4.2 Loesungsansatz: "Shift-Left" durch C++17
+
+Der Begriff **"Shift-Left"** beschreibt die systematische Verschiebung der Fehlererkennung nach links im V-Modell -- weg von der teuren Hardware-Integrationsphase hin zur statischen Analysephase und Kompilierzeit.
+
+### Ersetzung unsicherer C-Konstrukte durch typstarke C++17-Mechanismen
+
+C++17 stellt Sprachmittel bereit, die dieselbe Funktionalitaet wie C-Makros bieten, dabei jedoch **vollstaendig in das Typsystem des Compilers integriert** sind:
+
+\`\`\`cpp
+/* C++17 Ansatz -- AutomotiveDemo Projektstandard */
+namespace Config {
+    static constexpr uint32_t CycleTimeMs   = 10;
+    static constexpr uint32_t StackSize      = 4096;
+    static constexpr uint32_t TaskPriority   = 5;
+    static constexpr uint32_t MaxSensors     = 8;
+}  // namespace Config
+\`\`\`
+
+Jede Konstante hat einen **definierten Typ** (\`uint32_t\`), einen **definierten Scope** (\`Config::\`) und wird **zur Kompilierzeit** ausgewertet. Der Compiler kann Typ-Inkompatibilitaeten, Overflow und Scope-Verletzungen erkennen und als Fehler melden.
+
+### Verschiebung der Fehlererkennung
+
+Die folgende Darstellung illustriert den Shift-Left-Effekt:
+
+\`\`\`
+V-Modell Phase           Legacy C            C++17 (Projekt)
+---------------------------------------------------------------------
+Spezifikation            -                   -
+Moduldesign              -                   -
+Implementierung          -                   constexpr Pruefungen
+Statische Analyse        cppcheck (begrenzt) cppcheck + clang-tidy + Compiler
+Kompilierung             Basis-Warnungen     static_assert, -Werror
+Unit-Test                Erste Fehlerfunde   Bereits abgesichert
+Integration (HW)         Viele Fehler        Wenige Restfehler
+Systemtest               Spaete Fehler       Validierung
+\`\`\`
+
+Im Projekt wird dieser Ansatz konkret durch die \`platformio.ini\`-Konfiguration umgesetzt:
+
+\`\`\`ini
+; platformio.ini -- Auszug
+build_flags =
+    -std=c++17
+    -Wall -Wextra -Werror        ; Warnungen = Build-Fehler
+    -fstack-protector-strong      ; Stack-Overflow-Schutz
+
+check_tool = cppcheck, clangtidy  ; Statische Analyse-Tools
+\`\`\`
+
+Die Kombination aus \`-Werror\` (jede Warnung bricht den Build ab) und den statischen Analyse-Tools \`cppcheck\` und \`clang-tidy\` bildet ein mehrstufiges Quality Gate, das Fehler frueh abfaengt.
+
+### Zero-Overhead Abstraction
+
+Ein haeufiges Gegenargument gegen C++ in Embedded-Systemen lautet: "C++ erzeugt Overhead." Dies trifft fuer die hier verwendeten C++17-Sprachmittel **nicht** zu:
+
+- **\`constexpr\`**: Wird vollstaendig zur Kompilierzeit ausgewertet. Im Binary steht nur die fertige Konstante -- exakt wie bei einem \`#define\`.
+- **\`static_assert\`**: Existiert nur zur Kompilierzeit. Erzeugt **keinen einzigen Byte** im Binary.
+- **\`namespace\`**: Reines Compile-Time-Konzept zur Namensaufloesung. Kein Runtime-Overhead.
+- **\`std::array<T,N>\`**: Identisches Speicherlayout wie ein C-Array \`T[N]\`. Kein zusaetzlicher Overhead.
+
+Die Abstraktion ist damit **zero-overhead**: Sie verbessert die Sicherheit, ohne CPU-Zyklen oder Flash-Speicher zu kosten.
+
+---
+
+## 4.3 Analyse der Sprachmittel (Vergleich)
+
+### Detaillierte Vergleichstabelle
+
+| Kriterium | Legacy C Ansatz | C++17 Loesung (Projektstandard) | Safety-Gewinn |
+|---|---|---|---|
+| **Konstanten** | \`#define TIMEOUT 100\` | \`static constexpr uint32_t TimeoutMs = 100;\` | **Hoch:** Strenge Typbindung, Scope-Kontrolle, Debugger-Sichtbarkeit |
+| **Arrays / Puffer** | \`int buf[10];\` (verfaellt zu Pointer) | \`std::array<int, 10> buf;\` | **Sehr Hoch:** Laenge ist Teil des Typs, Bounds-Checking moeglich |
+| **Optionale Werte** | \`int* val\` (kann \`NULL\` sein) | \`std::optional<int> val\` | **Mittel:** Erzwingt explizite Pruefung via \`has_value()\` |
+| **Hardware-Pruefung** | \`if (sizeof(Reg) != 4) Error();\` | \`static_assert(sizeof(Reg) == 4);\` | **Exzellent:** Build bricht ab, kein Runtime-Code noetig |
+| **Namensraeume** | \`Mcal_System_Init()\` (Prefix-Konvention) | \`Mcal::System::init()\` | **Hoch:** Compiler-erzwungene Trennung, keine Namenskollisionen |
+| **Unbenutzte Parameter** | \`(void)param;\` (C-Idiom) | \`(void)param;\` oder \`[[maybe_unused]]\` | **Mittel:** MISRA-konformes Unterdruecken von Warnungen |
+| **Null-Pointer** | \`NULL\` (Makro, oft \`(void*)0\`) | \`nullptr\` (Keyword, typsicher) | **Hoch:** Keine implizite Konvertierung zu Integer |
+
+### Konkrete Code-Beispiele aus dem Projekt
+
+#### Beispiel 1: Architektur-Pruefung mit \`static_assert\`
+
+Das Projekt nutzt \`static_assert\` als Compile-Time Quality Gate, um sicherzustellen, dass der Code nur auf einer 32-Bit-Architektur gebaut werden kann (Referenz: \`docs/PRESENTATION.md\`, Folie 5):
+
+\`\`\`cpp
+// SAFETY: Kompilierzeit-Check der Architektur (Shift-Left)
+static_assert(sizeof(void*) == 4, "Error: Target must be 32-bit");
+\`\`\`
+
+**Wirkung:** Wird der Code versehentlich fuer eine 64-Bit-Plattform konfiguriert, bricht der Build **sofort** mit einer klaren Fehlermeldung ab. In Legacy C wuerde derselbe Fehler erst zur Laufzeit auf der Zielhardware auffallen -- moeglicherweise als kryptischer Absturz.
+
+#### Beispiel 2: MISRA-konformes Ignorieren unbenutzter Parameter
+
+In \`src/main.cpp\` (Zeile 20) wird der FreeRTOS Task-Parameter explizit als unbenutzt markiert:
+
+\`\`\`cpp
+// src/main.cpp
+void run_safety_task(void* pvParameters) {
+    (void)pvParameters;  // Explicit ignore (MISRA C++ Rule 0-1-3)
+    // ...
+}
+\`\`\`
+
+**Hintergrund:** FreeRTOS erwartet die Signatur \`void (*)(void*)\`. Der Parameter \`pvParameters\` wird in diesem Task nicht benoetigt. Ohne den \`(void)\`-Cast wuerde der Compiler mit \`-Wunused-parameter\` eine Warnung erzeugen, die durch \`-Werror\` zum Build-Abbruch fuehrt. Der explizite Cast dokumentiert die bewusste Entscheidung und erfuellt MISRA C++ Rule 0-1-3 ("Every unused parameter shall be explicitly cast to void").
+
+#### Beispiel 3: Namespace-Nutzung fuer Schichtentrennung
+
+Das Projekt nutzt C++ Namespaces, um die AUTOSAR-Schichtenarchitektur im Typsystem abzubilden:
+
+\`\`\`cpp
+// lib/Mcal_System/include/Mcal_System.hpp
+namespace Mcal {
+class System {
+   public:
+    static void init();
+    static uint32_t getSystemTick();
+};
+}  // namespace Mcal
+\`\`\`
+
+\`\`\`cpp
+// lib/Srv_Monitor/include/Srv_Monitor.hpp
+namespace Srv {
+class Monitor {
+   public:
+    static void runCycle();
+};
+}  // namespace Srv
+\`\`\`
+
+\`\`\`cpp
+// src/main.cpp -- Aufruf ueber qualifizierte Namen
+Mcal::System::init();            // MCAL-Schicht
+Srv::Monitor::runCycle();        // Service-Schicht
+\`\`\`
+
+**Wirkung:** Die Schichtenzugehoerigkeit ist direkt im Code sichtbar und wird vom Compiler durchgesetzt. Ein versehentlicher Aufruf einer nicht-importierten Schicht fuehrt zu einem Compiler-Fehler. In Legacy C waere dies nur ueber Namenskonventionen (\`Mcal_System_Init()\`) moeglich -- ohne Compiler-Durchsetzung.
+
+#### Beispiel 4: Typsichere Standardbibliothek-Header
+
+Das Projekt verwendet \`<cstdint>\` statt \`<stdint.h>\`:
+
+\`\`\`cpp
+// lib/Mcal_System/include/Mcal_System.hpp
+#include <cstdint>  // C++: uint32_t im Namespace std::
+
+static uint32_t getSystemTick();
+\`\`\`
+
+**Wirkung:** \`<cstdint>\` platziert die Typen zusaetzlich im Namespace \`std::\`, was Namenskollisionen vermeidet. Dies ist die von MISRA C++ empfohlene Variante gegenueber dem C-Header \`<stdint.h>\`.
+
+#### Beispiel 5: \`nullptr\` statt \`NULL\`
+
+In \`src/main.cpp\` (Zeile 36) wird \`nullptr\` fuer die FreeRTOS Task-Erstellung verwendet:
+
+\`\`\`cpp
+// src/main.cpp
+xTaskCreate(run_safety_task, "SafetyTask", 4096, nullptr, 5, nullptr);
+\`\`\`
+
+**Wirkung:** \`nullptr\` ist ein C++11/17 Keyword mit eigenem Typ (\`std::nullptr_t\`). Im Gegensatz zu \`NULL\` (das als \`0\` oder \`(void*)0\` definiert sein kann) kann \`nullptr\` nicht versehentlich als Integer interpretiert werden. Dies eliminiert eine ganze Klasse von Typ-Verwechslungsfehlern.
+
+---
+
+## 4.4 Konsequenz fuer die Ressourcennutzung
+
+Ein zentrales Kriterium fuer die Sprachwahl in Embedded-Systemen ist die **Ressourceneffizienz**. Die ESP32-S3 Plattform verfuegt ueber begrenzte Ressourcen (512 KB SRAM, 8 MB Flash). Die C++17-Sprachmittel muessen daher nachweislich ressourcenneutral sein.
+
+### Flash-Speicher
+
+| Mechanismus | Auswirkung auf Flash | Erklaerung |
+|---|---|---|
+| \`constexpr\` | **Neutral** | Kompilierzeit-Berechnung; im Binary steht nur die fertige Konstante. Identisch zu \`#define\`. |
+| \`static_assert\` | **Null** | Existiert ausschliesslich zur Kompilierzeit. Erzeugt keinen Code im Binary. |
+| \`namespace\` | **Null** | Name-Mangling aendert nur Symbolnamen, nicht die Codegroesse. |
+| \`std::array<T,N>\` | **Neutral** | Identisches Speicherlayout wie \`T[N]\`. Kein zusaetzlicher Overhead. |
+| \`std::optional<T>\` | **Minimal** | Ein zusaetzliches \`bool\`-Flag (1 Byte + Alignment) gegenueber rohem \`T\`. |
+
+### RAM (Stack-Nutzung)
+
+Das Projekt vermeidet konsequent **dynamische Speicherallokation** (\`new\`, \`malloc\`) im laufenden Betrieb:
+
+- **\`std::array\`** wird auf dem Stack alloziert -- feste Groesse, zur Kompilierzeit bekannt.
+- **\`std::optional\`** wird auf dem Stack alloziert -- kein Heap-Zugriff.
+- **FreeRTOS Tasks** erhalten feste Stack-Groessen bei der Erstellung (vgl. \`main.cpp\` Zeile 36: \`4096\` Bytes).
+
+\`\`\`cpp
+// Feste Stack-Allokation -- kein Heap im laufenden Betrieb
+xTaskCreate(run_safety_task, "SafetyTask", 4096, nullptr, 5, nullptr);
+//                                         ^^^^
+//                              Stack-Groesse: Zur Kompilierzeit definiert
+\`\`\`
+
+### Keine Speicherfragmentierung
+
+Durch den Verzicht auf Heap-Allokation im laufenden Betrieb wird **Speicherfragmentierung** ausgeschlossen. Dies ist fuer die Langzeitstabilitaet sicherheitskritischer Systeme essentiell:
+
+- Kein \`new\` / \`delete\` in zyklischen Tasks
+- Kein \`std::string\` (verwendet Heap intern)
+- Kein \`std::vector\` (verwendet Heap intern)
+- Stattdessen: \`std::array\` (Stack), \`constexpr\`-Konstanten (Flash), feste Puffergroessen
+
+Diese Strategie garantiert, dass das System nach 1 Stunde denselben Speicherzustand hat wie nach 10.000 Stunden -- ein Kernanforderung fuer Automotive-Langlaeufer.
+
+---
+
+## 4.5 Fazit zur Sprachwahl
+
+### Normative Grundlage
+
+Die Entscheidung fuer C++17 stuetzt sich auf etablierte Automotive-Richtlinien:
+
+- **AUTOSAR C++14 Coding Guidelines** (Release 19-03): Definiert einen sicheren Subset von C++14 fuer Embedded-Systeme. Das Projekt aktualisiert diesen auf C++17, da die zusaetzlichen Sprachmittel (\`std::optional\`, \`constexpr if\`, strukturierte Bindungen) den Safety-Gewinn erhoehen, ohne neue Risiken einzufuehren.
+- **MISRA C++:2023**: Der aktuelle MISRA-Standard unterstuetzt C++17 und empfiehlt explizit den Einsatz von \`constexpr\`, \`static_assert\` und Namespaces.
+- **ISO 26262-6, Tabelle 1**: Fordert die Verwendung von Sprachsubsets und statischer Analyse -- beides wird im Projekt umgesetzt.
+
+### Der Compiler als erstes statisches Analyse-Tool
+
+Durch die konsequente Nutzung von C++17-Sprachmitteln wird der **GCC-Compiler selbst zum primaeren Analyse-Werkzeug**:
+
+\`\`\`
+Quality Gate Pipeline (Projekt-Konfiguration)
+=============================================
+
+1. Ebene: Compiler (GCC 13, -std=c++17)
+   - static_assert          --> Architektur-Invarianten
+   - constexpr              --> Typ- und Wertepruefung
+   - -Wall -Wextra -Werror  --> Alle Warnungen = Fehler
+
+2. Ebene: Statische Analyse (cppcheck)
+   - --enable=warning,style,performance,portability
+   - Erkennung von: Speicherlecks, uninitialisierte Variablen,
+     Pufferueberlaeufe, Style-Verstoesse
+
+3. Ebene: Statische Analyse (clang-tidy)
+   - cert-*                 --> CERT C++ Sicherheitsregeln
+   - clang-analyzer-*       --> Datenflussanalyse
+   - bugprone-*             --> Haeufige Fehlermuster
+   - performance-*          --> Performanz-Antipatterns
+   - readability-*          --> Lesbarkeit und Wartbarkeit
+\`\`\`
+
+Diese dreistufige Pipeline ist in \`platformio.ini\` konfiguriert und wird bei jedem Build automatisch ausgefuehrt.
+
+### Reduktion von Undefined Behavior (UB)
+
+C++17 eliminiert oder entschaerft mehrere Quellen von **Undefined Behavior**, die in C allgegenwaertig sind:
+
+| UB-Quelle | C-Risiko | C++17-Mitigation |
+|---|---|---|
+| Uninitialised variables | Zufaelliger Wert, undefiniert | \`constexpr\` erzwingt Initialisierung |
+| Buffer overflow | Array verfaellt zu Pointer, keine Laengenpruefung | \`std::array::at()\` mit Bounds-Check |
+| Null pointer dereference | \`NULL\`-Pruefung oft vergessen | \`std::optional\` erzwingt explizite Behandlung |
+| Integer overflow (signed) | Undefiniert in C/C++ | \`constexpr\`-Berechnung erkennt Overflow zur Kompilierzeit |
+| Type punning | \`void*\`-Casts ohne Pruefung | \`static_cast<>\` mit Compiler-Pruefung |
+
+### Verweis auf Projektkonfiguration
+
+Die C++17-Entscheidung ist in der \`platformio.ini\` des Projekts verankert:
+
+\`\`\`ini
+; platformio.ini -- Vollstaendige Build-Konfiguration
+[env:esp32s3-automotive]
+platform = espressif32
+board = seeed_xiao_esp32s3
+framework = espidf
+
+; --- Compiler Standards & Safety ---
+build_unflags = -std=gnu++11 -std=gnu++14 -std=c11
+build_flags =
+    -std=c11              ; C-Code: ISO C11 (fuer ESP-IDF Treiber)
+    -std=c++17            ; C++-Code: ISO C++17 (fuer Applikation)
+    -Wall -Wextra -Werror ; Maximale Warnungsstufe, Warnungen = Fehler
+    -fstack-protector-strong ; Runtime Stack-Schutz
+
+; --- Statische Analyse ---
+check_tool = cppcheck, clangtidy
+check_flags =
+    cppcheck: --std=c11 --std=c++17 --inline-suppr
+              --enable=warning,style,performance,portability
+    clangtidy: --checks=-*,cert-*,clang-analyzer-*,bugprone-*,
+               performance-*,readability-*
+\`\`\`
+
+Bemerkenswert ist die Zeile \`build_unflags = -std=gnu++11 -std=gnu++14\`: Das ESP-IDF-Framework setzt standardmaessig GNU-Erweiterungen ein. Das Projekt **entfernt** diese explizit und ersetzt sie durch den strikten ISO-Standard. Dies stellt sicher, dass der Code portabel bleibt und keine Compiler-spezifischen Erweiterungen nutzt -- eine Grundvoraussetzung fuer die spaetere Portierung auf ASIL-zertifizierte Plattformen (z.B. NXP S32K, Infineon AURIX).
+
+### Zusammenfassung
+
+Die Wahl von C++17 fuer dieses Projekt ist keine Praeferenzentscheidung, sondern eine **ingenieurmaessige Ableitung** aus den Anforderungen der funktionalen Sicherheit:
+
+1. **Typsicherheit** statt Praeprocessor-Textersetzung
+2. **Compile-Time-Pruefung** statt Runtime-Fehler
+3. **Zero-Overhead-Abstraktion** statt C-Performance-Verlust
+4. **Compiler als Analyse-Tool** statt separater Post-hoc-Pruefung
+5. **Normkonformitaet** (AUTOSAR, MISRA, ISO 26262) statt Ad-hoc-Entwicklung
+
+Das Ergebnis ist ein Code-Stack, der dieselbe Performanz wie klassisches C bietet, dabei jedoch eine signifikant hoehere Fehlererkennungsrate bereits zur Kompilierzeit erreicht -- und damit die Gesamtkosten der Softwareentwicklung im V-Modell-Prozess reduziert.
+`
+        ];
+
+        async function renderAll() {
+            for (let i = 0; i < docs.length; i++) {
+                document.getElementById('content-' + i).innerHTML = marked.parse(docs[i]);
+            }
+            await mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+        }
+
+        function showSection(idx) {
+            document.querySelectorAll('.doc-section').forEach((el, i) => {
+                el.classList.toggle('active', i === idx);
+            });
+            document.querySelectorAll('.nav-item').forEach((el, i) => {
+                el.classList.toggle('active', i === idx);
+            });
+            window.scrollTo(0, 0);
+            mermaid.run({ nodes: document.querySelectorAll('.doc-section.active .mermaid') });
+        }
+
+        renderAll();
+    </script>
+</body>
+</html>
