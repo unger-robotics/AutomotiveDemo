@@ -34,26 +34,47 @@ pio run --target upload    # Auf Board flashen (USB-C)
 pio device monitor         # Serielle Ausgabe (115200 Baud)
 pio check                  # Statische Analyse (cppcheck + clang-tidy)
 pio test                   # Unit Tests (Board muss angeschlossen sein)
+clang-format -i src/*.cpp lib/*/src/*.cpp lib/*/include/*.hpp  # Code formatieren
 ```
+
+## Debugging
+
+Der XIAO ESP32-S3 hat **eingebautes USB-JTAG** — kein externer Debugger noetig.
+
+| Methode | Befehl / Aktion | Beschreibung |
+|---------|-----------------|--------------|
+| Serial Monitor | `pio device monitor` | Log-Ausgaben (fuer 90% der Faelle ausreichend) |
+| VS Code Debugger | `F5` | Breakpoints per Klick, Variable Watch, Call Stack |
+| GDB-Konsole | `pio debug` | Kommandozeilen-Debugging |
+
+**VS Code Debugging:** Projekt in VS Code oeffnen → Breakpoint per Klick links neben Zeilennummer setzen → `F5` startet den Debugger. Programm haelt bei `app_main()`.
+
+| Tastenkuerzel | Aktion |
+|---------------|--------|
+| `F5` | Debugger starten / Weiterlaufen |
+| `F9` | Breakpoint setzen/entfernen |
+| `F10` | Naechste Zeile (Step Over) |
+| `F11` | In Funktion springen (Step Into) |
+| `Shift+F5` | Debugger stoppen |
 
 ## Quality Gates
 
-| Gate | Tool | Konfiguration |
-|------|------|---------------|
-| Compiler | GCC Xtensa | `-Wall -Wextra -Werror` (Zero Warnings) |
-| Statische Analyse | cppcheck + clang-tidy | `pio check` |
-| Formatierung | clang-format | Google-basiert, 4-Space Indent |
-| Unit Tests | Unity Framework | `pio test` (auf Target) |
-| CI | GitHub Actions | Build + Analyse bei Push/PR |
+| Gate              | Tool                  | Konfiguration                           |
+|-------------------|-----------------------|-----------------------------------------|
+| Compiler          | GCC Xtensa            | `-Wall -Wextra -Werror` (Zero Warnings) |
+| Statische Analyse | cppcheck + clang-tidy | `pio check`                             |
+| Formatierung      | clang-format          | Google-basiert, 4-Space Indent          |
+| Unit Tests        | Unity Framework       | `pio test` (auf Target)                 |
+| CI                | GitHub Actions        | Build + Analyse bei Push/PR             |
 
 ## Dokumentation
 
-| Dokument | Inhalt |
-|----------|--------|
-| [`01_Systemdokumentation.md`](docs/01_Systemdokumentation.md) | Architektur, Schnittstellen, Design-Constraints |
-| [`02_Benutzerhandbuch.md`](docs/02_Benutzerhandbuch.md) | Build-Setup, Analyse-Workflow |
-| [`03_Abschlussbericht.md`](docs/03_Abschlussbericht.md) | Gap-Analyse (Prototyp vs. Serie), ASIL-Klassifikation |
-| [`04_Cpp17_Herleitung.md`](docs/04_Cpp17_Herleitung.md) | C++17-Rationale fuer sicherheitskritische Systeme |
+| Dokument                                                      | Inhalt                                                |
+|---------------------------------------------------------------|-------------------------------------------------------|
+| [`01_Systemdokumentation.md`](docs/01_Systemdokumentation.md) | Architektur, Schnittstellen, Design-Constraints       |
+| [`02_Benutzerhandbuch.md`](docs/02_Benutzerhandbuch.md)       | Build-Setup, Analyse-Workflow                         |
+| [`03_Abschlussbericht.md`](docs/03_Abschlussbericht.md)       | Gap-Analyse (Prototyp vs. Serie), ASIL-Klassifikation |
+| [`04_Cpp17_Herleitung.md`](docs/04_Cpp17_Herleitung.md)       | C++17-Rationale fuer sicherheitskritische Systeme     |
 
 Dokumentation im Browser ansehen (mit Mermaid-Diagrammen):
 
